@@ -1,0 +1,14 @@
+node_modules/
+dist/
+src-tauri/target/
+.env
+*.key
+*.pfx
+
+# Additional signing/security files
+*.key.pub
+*.p12
+
+# Windows
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NucleoPin</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<div id="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">NP</div>
+      <div><h1>NucleoPin</h1><span>Desktop</span></div>
+    </div>
+
+    <button id="newProject" class="primary">+ New Project</button>
+
+    <div class="section-head">
+      <span>PROJECTS</span>
+      <input id="projectSearch" placeholder="Search" />
+    </div>
+    <div id="projectList" class="project-list"></div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="project-heading">
+        <div id="activeProjectName" class="project-name">No project selected</div>
+        <div id="activeFileMeta" class="file-meta">Create a project or select one from the left.</div>
+        <div id="activeIocBadge" class="active-ioc-badge">No active IOC</div>
+      </div>
+      <div class="top-actions">
+        <button id="renameProject">Rename</button>
+        <button id="openCubeMx" class="secondary" type="button" title="Open active IOC in STM32CubeMX">Open in CubeMX</button>
+<button id="exportProject" class="secondary" type="button">Export Project</button>
+<button id="importProject" class="secondary" type="button">Import Project</button>
+<button id="addIoc">+ Add IOC</button>
+        <button id="refreshIoc" title="Reload the active IOC from disk">Reload IOC</button>
+      </div>
+    </header>
+
+    <div class="content-grid">
+      <section class="visualizer-panel">
+        <iframe id="visualizerFrame" src="/visualizer.html" title="NucleoPin visualizer"></iframe>
+      </section>
+
+      <aside class="details-panel">
+        <div class="tabs tabs-six">
+          <button class="tab active" data-tab="project">Project</button>
+          <button class="tab" data-tab="components">Components</button>
+          <button class="tab" data-tab="wiring">Wiring</button>
+          <button class="tab" data-tab="peripherals">Peripherals</button>
+          <button class="tab" data-tab="activity">Changes</button>
+          <button class="tab" data-tab="check">Check</button>
+        </div>
+
+        <div class="tab-page active" data-page="project">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">IOC FILES</div>
+              <span id="iocCount" class="count">0</span>
+            </div>
+            <div id="iocList" class="ioc-list empty">No project selected.</div>
+          </section>
+
+          <section class="card">
+            <div class="card-title">PIN LABELS</div>
+            <div class="inline-form">
+              <input id="pinLabelPin" placeholder="PA5" />
+              <input id="pinLabelName" placeholder="A_GREEN" />
+              <button id="addPinLabel">Add</button>
+            </div>
+            <div id="pinLabelList" class="mini-list empty">No custom labels.</div>
+          </section>
+
+          <section class="card">
+            <div class="card-title">PROJECT NOTES</div>
+            <textarea id="projectNotes" placeholder="Notes about this project..." disabled></textarea>
+            <div class="autosave">Saved automatically</div>
+          </section>
+
+          <section class="card">
+            <div class="card-title">FILE WATCHING</div>
+            <label class="toggle-row">
+              <input id="autoReload" type="checkbox" checked />
+              <span>Reload when active IOC changes</span>
+            </label>
+            <div id="watchStatus" class="watch-status">No IOC selected</div>
+          </section>
+
+          <section class="card danger-card">
+            <button id="aboutApp" class="secondary" type="button">About</button>
+<button id="removeProject" class="danger" disabled>Remove Project</button>
+            <div class="danger-note">Removes it from NucleoPin only. Your IOC files are not deleted.</div>
+          </section>
+        </div>
+
+        <div class="tab-page" data-page="components">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">PROJECT COMPONENTS</div>
+              <button id="addComponent" class="small-primary">+ Add</button>
+            </div>
+            <div id="componentList" class="component-list empty">No components yet.</div>
+          </section>
+        </div>
+
+        <div class="tab-page" data-page="wiring">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">WIRING TABLE</div>
+              <button id="copyWiring" class="small">Copy</button>
+            </div>
+            <div id="wiringTable" class="wiring-wrap empty">No wiring to show.</div>
+          </section>
+        </div>
+
+        <div class="tab-page" data-page="peripherals">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">ACTIVE PERIPHERALS</div>
+              <span id="peripheralCount" class="count">0</span>
+            </div>
+            <div id="peripheralList" class="peripheral-list empty">Load an IOC to inspect peripherals.</div>
+          </section>
+        </div>
+
+        <div class="tab-page" data-page="activity">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">IOC CHANGE HISTORY</div>
+              <button id="clearChanges" class="small">Clear</button>
+            </div>
+            <div id="changeSummary" class="change-summary">No changes recorded yet.</div>
+            <div id="changeList" class="change-list empty">Save the IOC in CubeMX/CubeIDE to see changes here.</div>
+          </section>
+        </div>
+
+        <div class="tab-page" data-page="check">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-title">SMART PROJECT CHECK</div>
+              <button id="runSmartCheck" class="small-primary">Run Check</button>
+            </div>
+            <div id="smartCheckSummary" class="smart-check-summary">Run a check to review the active project.</div>
+            <div id="smartCheckList" class="smart-check-list empty">No check results yet.</div>
+          </section>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="statusbar">
+      <span id="statusText">Ready</span>
+      <span>NucleoPin v1.0.0</span>
+    </footer>
+  </main>
+</div>
+
+<div id="componentModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="componentModalTitle">Add Component</h2>
+        <div class="modal-sub">Save hardware and the pins it uses in this project.</div>
+      </div>
+      <button id="closeComponentModal" class="close">×</button>
+    </div>
+
+    <div class="form-grid">
+      <label>Component name<input id="componentName" placeholder="OLED Display" /></label>
+      <label>Type
+        <select id="componentType">
+          <option>Generic</option>
+          <option>OLED Display</option>
+          <option>LED</option>
+          <option>Push Button</option>
+          <option>Sensor</option>
+          <option>Buzzer</option>
+          <option>Motor / Servo</option>
+          <option>Communication Module</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="connections-head">
+      <b>Connections</b>
+      <button id="addConnectionRow" class="small-primary">+ Connection</button>
+    </div>
+    <div id="connectionRows"></div>
+
+    <div class="modal-actions">
+      <button id="cancelComponent">Cancel</button>
+      <button id="saveComponent" class="primary">Save Component</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="welcomeOverlay" class="welcome-overlay">
+  <div class="welcome-card">
+    <div class="welcome-mark">NP</div>
+    <h2>Welcome to NucleoPin</h2>
+    <p>Plan, inspect and document your STM32 NUCLEO project without modifying the CubeMX IOC.</p>
+
+    <div class="welcome-flow">
+      <b>1</b><span>Create or select a project</span>
+      <b>2</b><span>Add your IOC</span>
+      <b>3</b><span>Start planning</span>
+    </div>
+
+    <div class="welcome-actions">
+      <button id="welcomeContinue" class="primary" type="button">Continue to NucleoPin</button>
+      <button id="welcomeCreate" class="secondary" type="button">Create New Project</button>
+    </div>
+
+    <div class="welcome-build">v1.0.0</div>
+    <label class="welcome-pref">
+      <input id="welcomeDontShow" type="checkbox">
+      <span>Don't show this on startup</span>
+    </label>
+  </div>
+</div>
+
+<div id="missingIocModal" class="shell-modal" hidden>
+  <div class="shell-modal-card">
+    <h2>IOC file not found</h2>
+    <p id="missingIocText"></p>
+    <div class="shell-modal-actions">
+      <button id="locateMissingIoc" class="primary" type="button">Locate File</button>
+      <button id="closeMissingIoc" class="secondary" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="aboutModal" class="shell-modal" hidden>
+  <div class="shell-modal-card">
+    <h2>NucleoPin v1.0.0</h2>
+    <p>STM32 NUCLEO pinout, wiring and project companion.</p>
+    <div class="about-grid">
+      <span>Supported boards</span><b>NUCLEO-F401RE / F411RE</b>
+      <span>IOC handling</span><b>Read-only</b>
+      <span>Configuration editor</span><b>STM32CubeMX</b>
+      <span>Release status</span><b>Stable Release</b>
+    </div>
+    <label class="about-welcome-toggle">
+      <input id="aboutShowWelcome" type="checkbox">
+      <span>Show Welcome screen on startup</span>
+    </label>
+    <div class="update-panel"><div><b>Software updates</b><span id="updateStatus">Automatic update checking is enabled.</span></div><button id="checkForUpdates" class="secondary" type="button">Check for Updates</button></div>
+    <button id="showWelcomeNow" class="secondary" type="button">Show Welcome Now</button>
+    <button id="closeAbout" class="primary" type="button">Close</button>
+  </div>
+</div>
+
+<div id="appToast" class="app-toast" role="status" aria-live="polite">
+  <span id="appToastText"></span>
+  <button id="appToastAction" type="button" hidden></button>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

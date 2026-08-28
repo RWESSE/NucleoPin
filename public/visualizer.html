@@ -1,0 +1,3491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NUCLEO-F401RE / F411RE IOC Pinout</title>
+<style>
+:root{
+ --page:#172033;--panel:#202938;--line:#334155;--text:#eef2f7;--muted:#9aa6b2;
+ --board:#dedede;--boardText:#111;--morpho:#1139ff;--arduino:#ff00d4;
+ --input:#38bdf8;--output:#22c55e;--spi:#f59e0b;--i2c:#a855f7;--uart:#eab308;
+ --adc:#06b6d4;--timer:#ec4899;--debug:#ef4444;--clock:#8b5cf6;--used:#16a34a;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font-family:Segoe UI,Arial,sans-serif}
+body.light{--page:#edf2f7;--panel:#fff;--line:#cbd5e1;--text:#0f172a;--muted:#64748b}
+.app{max-width:1500px;margin:auto;padding:20px}.top{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{margin:0;font-size:23px}.subtitle{font-size:12px;color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.btn,.filelabel{border:1px solid #475569;background:#0f172a;color:#e5e7eb;border-radius:8px;padding:8px 10px;font-size:11px;cursor:pointer}
+.filelabel input{display:none}.status{font-size:10px;border:1px solid #475569;border-radius:999px;padding:6px 9px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(930px,1fr) 400px;gap:16px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 8px 26px rgba(0,0,0,.15)}
+.drop{border:1px dashed #64748b;border-radius:9px;padding:9px;text-align:center;color:var(--muted);font-size:11px;margin-bottom:10px}.drop.drag{border-color:#38bdf8;background:#082f49;color:#bae6fd}
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.search{flex:1;min-width:240px;background:#0f172a;border:1px solid #475569;color:#fff;border-radius:8px;padding:8px 10px}
+.pill{border:1px solid #475569;background:#0f172a;color:#dbe4ef;border-radius:999px;font-size:10px;padding:5px 8px;cursor:pointer}.pill.active{background:#334155}
+.board{background:var(--board);color:var(--boardText);border-radius:10px;padding:20px 22px 17px;overflow:auto;min-height:610px}
+.board.darkboard{--board:#202124;--boardText:#f5f5f5}.board.darkboard .mname,.board.darkboard .amcu{color:#85a5ff}.board.darkboard .connector-title{color:#f4f4f5}
+.board-title{text-align:center;font-size:28px;font-weight:500;margin:25px 0 48px}
+.board-grid{min-width:900px;display:grid;grid-template-columns:390px 1fr 390px;gap:28px;align-items:start}
+.cluster{display:grid;gap:8px}.leftcluster{grid-template-columns:180px 190px}.rightcluster{grid-template-columns:190px 180px}
+.connector-title{text-align:center;font-size:14px;font-weight:700;margin-bottom:6px}
+.mrow{display:grid;grid-template-columns:72px 23px 23px 72px;align-items:center;height:21px;position:relative}
+.mname{font-size:12px;color:#153dff}.mname.left{text-align:right;padding-right:6px}.mname.right{padding-left:6px}
+.mpin,.apin{height:18px;border:2px solid #000;color:#fff;display:flex;align-items:center;justify-content:center;font:bold 10px Arial;cursor:pointer;position:relative;padding:0}
+.mpin{background:var(--morpho)}.apin{background:var(--arduino);width:24px}
+.mpin:hover,.apin:hover,.selected{outline:3px solid #00c4d6;z-index:5}
+.special{background:#4b5563}.signal-input{box-shadow:0 0 0 3px var(--input)}.signal-output{box-shadow:0 0 0 3px var(--output)}
+.signal-spi{box-shadow:0 0 0 3px var(--spi)}.signal-i2c{box-shadow:0 0 0 3px var(--i2c)}.signal-uart{box-shadow:0 0 0 3px var(--uart)}
+.signal-adc{box-shadow:0 0 0 3px var(--adc)}.signal-timer{box-shadow:0 0 0 3px var(--timer)}.signal-debug{box-shadow:0 0 0 3px var(--debug)}
+.signal-clock{box-shadow:0 0 0 3px var(--clock)}.used{box-shadow:0 0 0 3px var(--used)}
+.atrace-row{display:grid;grid-template-columns:72px 24px 24px 86px;align-items:center;height:21px;position:relative}
+.alabel{font-size:12px;text-align:right;color:var(--arduino);padding-right:6px}.amcu{font-size:12px;color:#153dff;padding-left:5px}.trace{height:3px;background:#111}
+.leftArduino{padding-top:63px}.rightArduino{padding-top:0}.gap{height:8px}
+.center{padding-top:105px;text-align:center}.chip{width:96px;height:86px;background:#232323;color:#fff;border-radius:5px;margin:auto;display:flex;align-items:center;justify-content:center;font:bold 11px Arial}
+.project-label{font-size:9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:95px;margin-left:4px}
+.projectmode .mname,.projectmode .amcu{opacity:.25}.projectmode .unconfigured{opacity:.15!important}.projectmode .configured-label{opacity:1!important;font-weight:800}
+.legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:25px;font-size:10px}.key:before{content:"";display:inline-block;width:12px;height:12px;border:2px solid #000;vertical-align:-3px;margin-right:4px}.ka:before{background:var(--arduino)}.km:before{background:var(--morpho)}
+.ki:before{background:var(--input)}.ko:before{background:var(--output)}.ks:before{background:var(--spi)}.k2:before{background:var(--i2c)}.ku:before{background:var(--uart)}.kad:before{background:var(--adc)}.kt:before{background:var(--timer)}
+.card{border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:12px;background:rgba(15,23,42,.28)}.card h3{font-size:12px;margin:0 0 9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.big{font-size:20px;font-weight:800}.muted{font-size:12px;line-height:1.55;color:var(--muted)}.tag{display:inline-block;border:1px solid #475569;border-radius:999px;font-size:10px;padding:4px 7px;margin:5px 4px 0 0}
+.warning{border-color:#92400e;background:#451a03;color:#fde68a}.error{border-color:#991b1b;background:#450a0a;color:#fecaca}
+.locrow{display:grid;grid-template-columns:64px 50px 1fr;gap:5px;border-bottom:1px solid #334155;padding:5px 0;font-size:11px}
+.code{white-space:pre-wrap;background:#08101f;border-radius:8px;padding:10px;color:#d1fae5;font:11px/1.5 Consolas,monospace;max-height:180px;overflow:auto}.copyrow{display:flex;gap:6px;margin-top:8px}.copybtn{font-size:10px;padding:5px 7px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#fff;cursor:pointer}
+.tablewrap{max-height:260px;overflow:auto}.ptable{width:100%;border-collapse:collapse;font-size:10px}.ptable th,.ptable td{text-align:left;padding:6px;border-bottom:1px solid #334155}.ptable tr[data-pin]{cursor:pointer}.ptable tr[data-pin]:hover{background:#263247}
+.privacy{font-size:10px;color:var(--muted);margin-top:8px}
+@media(max-width:1120px){.layout{grid-template-columns:1fr}}
+@media print{body{background:#fff}.top .actions,.drop,.toolbar,.sideonly{display:none!important}.layout{display:block}.panel{box-shadow:none;border:0}.board{break-inside:avoid}.app{padding:0}.panel:last-child{margin-top:15px}}
+
+.project-label-left,.project-label-right{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  font-weight:800;
+  color:#0645ff;
+  white-space:nowrap;
+  max-width:150px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  pointer-events:none;
+  opacity:0;
+  transition:.15s;
+}
+.project-label-left{right:100%;margin-right:8px;text-align:right}
+.project-label-right{left:100%;margin-left:8px;text-align:left}
+.projectmode .project-label-left,.projectmode .project-label-right{opacity:0}
+.projectmode .mname,.projectmode .amcu{opacity:1}
+.projectmode .configured-label{opacity:1!important}
+.projectmode .unconfigured{opacity:.08!important}
+.projectmode .mpin.signal-input,.projectmode .mpin.signal-output,.projectmode .mpin.signal-spi,
+.projectmode .mpin.signal-i2c,.projectmode .mpin.signal-uart,.projectmode .mpin.signal-adc,
+.projectmode .mpin.signal-timer,.projectmode .mpin.signal-debug,.projectmode .mpin.signal-clock,
+.projectmode .apin.signal-input,.projectmode .apin.signal-output,.projectmode .apin.signal-spi,
+.projectmode .apin.signal-i2c,.projectmode .apin.signal-uart,.projectmode .apin.signal-adc,
+.projectmode .apin.signal-timer,.projectmode .apin.signal-debug,.projectmode .apin.signal-clock{
+  opacity:1!important;
+}
+.project-label-left.long,.project-label-right.long{font-size:9px}
+.project-label-left.verylong,.project-label-right.verylong{font-size:8px;max-width:175px}
+.board.darkboard .project-label-left,.board.darkboard .project-label-right{color:#8fb0ff}
+.pin-tooltip{
+  position:fixed;display:none;z-index:9999;pointer-events:none;
+  background:#0b1020;color:#f8fafc;border:1px solid #475569;border-radius:8px;
+  padding:7px 9px;font-size:11px;line-height:1.4;box-shadow:0 6px 20px rgba(0,0,0,.35);
+  max-width:260px
+}
+.selected-label{
+  background:rgba(0,196,214,.12);
+  border-radius:4px;
+}
+
+
+/* CubeMX GPIO labels appear only while hovering a configured pin. */
+.projectmode .mpin:hover .project-label-left,
+.projectmode .mpin:hover .project-label-right,
+.projectmode .apin:hover .project-label-left,
+.projectmode .apin:hover .project-label-right{
+  opacity:1;
+  z-index:50;
+  background:rgba(222,222,222,.96);
+  padding:3px 5px;
+  border-radius:4px;
+  box-shadow:0 2px 7px rgba(0,0,0,.18);
+}
+.board.darkboard.projectmode .mpin:hover .project-label-left,
+.board.darkboard.projectmode .mpin:hover .project-label-right,
+.board.darkboard.projectmode .apin:hover .project-label-left,
+.board.darkboard.projectmode .apin:hover .project-label-right{
+  background:rgba(32,33,36,.96);
+}
+
+
+/* v9 upgrades */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+.stat{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px;
+  text-align:center;
+  background:rgba(15,23,42,.22);
+}
+.stat b{display:block;font-size:16px}
+.stat span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+
+.check-summary{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+.check-pill{
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  border:1px solid #475569;
+}
+.check-ok{background:#052e16;border-color:#166534;color:#86efac}
+.check-warn{background:#451a03;border-color:#92400e;color:#fde68a}
+.check-bad{background:#450a0a;border-color:#991b1b;color:#fecaca}
+.check-list{font-size:11px;line-height:1.55}
+.check-item{padding:5px 0;border-bottom:1px solid #334155}
+.check-item:last-child{border-bottom:0}
+
+.wiring-active .mpin,
+.wiring-active .apin{opacity:.16!important}
+.wiring-active .wiring-match{
+  opacity:1!important;
+  outline:3px solid #00e5ff!important;
+  box-shadow:0 0 12px rgba(0,229,255,.9)!important;
+  z-index:30
+}
+.wiring-banner{
+  display:none;
+  margin-bottom:10px;
+  border:1px solid #0e7490;
+  background:#083344;
+  color:#cffafe;
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:11px;
+}
+.wiring-banner.show{display:block}
+
+.hover-card-title{font-weight:800;font-size:12px;margin-bottom:3px}
+.hover-card-line{color:#cbd5e1}
+.hover-card-label{color:#86efac;font-weight:700}
+
+
+/* v10 final feature + visual polish */
+body{background:
+  radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 28%),
+  radial-gradient(circle at top right, rgba(168,85,247,.08), transparent 24%),
+  var(--page);
+}
+.panel{backdrop-filter:blur(8px)}
+.board{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    inset 0 0 35px rgba(0,0,0,.06),
+    0 10px 26px rgba(0,0,0,.12);
+}
+.connector-title{
+  letter-spacing:.5px;
+  color:#1f2937;
+}
+.board.darkboard .connector-title{color:#f8fafc}
+.chip{
+  box-shadow:0 5px 13px rgba(0,0,0,.28), inset 0 0 0 1px #3f3f46;
+}
+.btn,.pill,.filelabel{transition:.15s ease}
+.btn:hover,.pill:hover,.filelabel:hover{transform:translateY(-1px)}
+.mpin,.apin{transition:opacity .15s, transform .12s, box-shadow .12s}
+.mpin:hover,.apin:hover{transform:scale(1.12)}
+
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:10000;
+  display:none;align-items:center;justify-content:center;padding:20px
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  width:min(760px,96vw);max-height:88vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);padding:18px
+}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.modal-head h2{margin:0;font-size:18px}
+.closebtn{border:1px solid #475569;background:#0f172a;color:white;border-radius:8px;padding:6px 9px;cursor:pointer}
+.help-steps{margin:0;padding-left:20px;color:var(--muted);font-size:12px;line-height:1.7}
+.help-note{margin-top:12px;padding:10px;border:1px solid #166534;background:#052e16;color:#bbf7d0;border-radius:8px;font-size:11px}
+
+.free-assistant{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px
+}
+.free-assistant select{
+  background:#0f172a;color:#fff;border:1px solid #475569;border-radius:7px;padding:7px
+}
+.free-status{font-size:11px;color:var(--muted);margin-top:8px}
+.findfree-active .mpin,.findfree-active .apin{opacity:.10!important}
+.findfree-active .free-match{
+  opacity:1!important;
+  outline:3px solid #84cc16!important;
+  box-shadow:0 0 13px rgba(132,204,22,.85)!important;
+  z-index:31
+}
+
+.wiring-list{
+  max-height:390px;overflow:auto;border:1px solid var(--line);border-radius:9px
+}
+.wiring-table{width:100%;border-collapse:collapse;font-size:11px}
+.wiring-table th,.wiring-table td{padding:7px;border-bottom:1px solid var(--line);text-align:left}
+.wiring-table th{position:sticky;top:0;background:#111827;color:#e5e7eb}
+.wiring-table tr[data-pin]{cursor:pointer}
+.wiring-table tr[data-pin]:hover{background:#263247}
+.empty-state{
+  text-align:center;padding:18px;color:var(--muted);font-size:12px
+}
+
+
+/* v10.6 safe toolbar: keep original controls in DOM for their proven handlers, hide duplicates visually */
+#print,#helpBtn,#wiringMode,#checkProject,#wiringListBtn{display:none!important}
+.tools-wrap{position:relative;display:inline-block}
+.tools-menu{display:none;position:absolute;right:0;top:calc(100% + 7px);min-width:190px;z-index:30000;background:#111827;border:1px solid #475569;border-radius:10px;padding:6px;box-shadow:0 14px 36px rgba(0,0,0,.42)}
+.tools-menu.show{display:block}
+.tools-menu button{display:block;width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:8px 9px;border-radius:7px;font-size:11px;cursor:pointer}
+.tools-menu button:hover{background:#263247}
+.filelabel{border-color:#3b82f6!important;background:linear-gradient(180deg,#2563eb,#1d4ed8)!important;color:#fff!important;font-weight:700;box-shadow:0 5px 14px rgba(37,99,235,.2)}
+
+
+/* =========================================================
+   v10.7 FINAL APPEARANCE — CSS ONLY
+   No HTML or JavaScript behavior changes.
+   ========================================================= */
+
+/* Overall canvas */
+body{
+  background:
+    radial-gradient(circle at 12% -8%, rgba(37,99,235,.14), transparent 32%),
+    radial-gradient(circle at 92% 2%, rgba(168,85,247,.10), transparent 27%),
+    linear-gradient(180deg,#101725 0%,#131c2b 48%,#111827 100%) !important;
+}
+
+.app{
+  max-width:1480px;
+}
+
+/* Panels */
+.panel{
+  background:linear-gradient(180deg,rgba(28,39,59,.985),rgba(22,31,47,.985)) !important;
+  border-color:#3a475a !important;
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+.card{
+  background:linear-gradient(180deg,rgba(15,23,42,.42),rgba(15,23,42,.28)) !important;
+  border-color:#354155 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+}
+
+.card h3{
+  color:#dbe4ee !important;
+  font-weight:800 !important;
+  letter-spacing:.72px !important;
+}
+
+/* Header */
+h1{
+  font-weight:760 !important;
+  letter-spacing:-.35px;
+}
+
+.subtitle{
+  color:#a9b5c4 !important;
+}
+
+/* Main board surface */
+.board{
+  background:
+    linear-gradient(180deg,#ededed 0%,#e3e3e3 100%) !important;
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.045),
+    inset 0 -18px 34px rgba(0,0,0,.035),
+    0 10px 26px rgba(0,0,0,.13) !important;
+}
+
+.board-title{
+  color:#222831;
+  font-weight:620 !important;
+  letter-spacing:.22px;
+}
+
+.connector-title{
+  color:#252f3d !important;
+  font-weight:800 !important;
+  letter-spacing:.5px;
+}
+
+/* Slightly softer physical pin labels */
+.mname,.amcu{
+  font-weight:650 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+
+/* Pin transitions */
+.mpin,.apin{
+  transition:
+    transform .11s ease,
+    opacity .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease,
+    outline-color .15s ease !important;
+}
+
+/* Unconfigured pins are slightly calmer once an IOC is loaded.
+   Existing project/filter JS classes remain untouched. */
+.mpin.unconfigured,
+.apin.unconfigured{
+  opacity:.72;
+  filter:saturate(.78) brightness(.96);
+}
+
+/* Keep configured pins visually dominant */
+.mpin.signal-input,.apin.signal-input,
+.mpin.signal-output,.apin.signal-output,
+.mpin.signal-spi,.apin.signal-spi,
+.mpin.signal-i2c,.apin.signal-i2c,
+.mpin.signal-uart,.apin.signal-uart,
+.mpin.signal-adc,.apin.signal-adc,
+.mpin.signal-timer,.apin.signal-timer,
+.mpin.signal-debug,.apin.signal-debug,
+.mpin.signal-clock,.apin.signal-clock,
+.mpin.used,.apin.used{
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Hover: restrained, precise */
+.mpin:hover,.apin:hover{
+  transform:scale(1.085) !important;
+  z-index:20;
+}
+
+/* Selected pin */
+.selected{
+  outline:3px solid #22d3ee !important;
+  box-shadow:
+    0 0 0 2px rgba(34,211,238,.17),
+    0 0 13px rgba(34,211,238,.68) !important;
+  z-index:25 !important;
+}
+
+/* Search */
+.search{
+  border-color:#536176 !important;
+  background:#0d1626 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.25),
+    0 1px 0 rgba(255,255,255,.02) !important;
+  transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease !important;
+}
+
+.search:focus{
+  outline:none !important;
+  border-color:#38bdf8 !important;
+  box-shadow:
+    0 0 0 3px rgba(56,189,248,.13),
+    inset 0 1px 2px rgba(0,0,0,.22) !important;
+  transform:translateY(-1px);
+}
+
+/* Upload should read as the primary action */
+.filelabel{
+  background:linear-gradient(180deg,#2f72f3,#1d4ed8) !important;
+  border-color:#4b8bff !important;
+  color:#fff !important;
+  font-weight:760 !important;
+  box-shadow:0 5px 15px rgba(37,99,235,.22) !important;
+}
+
+.filelabel:hover{
+  background:linear-gradient(180deg,#3b82f6,#2563eb) !important;
+}
+
+/* General control polish */
+.btn,.pill,.filter,.copybtn,.closebtn{
+  transition:
+    background .13s ease,
+    border-color .13s ease,
+    color .13s ease,
+    transform .11s ease,
+    box-shadow .13s ease !important;
+}
+
+.btn:hover,.pill:hover,.filter:hover,.copybtn:hover,.closebtn:hover{
+  transform:translateY(-1px);
+}
+
+/* Segmented/filter pills: calmer default, stronger active */
+.pill,.filter{
+  background:#0d1626 !important;
+  border-color:#465468 !important;
+}
+
+.pill.active,.filter.active{
+  background:#344156 !important;
+  color:#fff !important;
+  border-color:#64748b !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+/* Statistics */
+.stats-grid{
+  gap:8px !important;
+}
+
+.stat{
+  min-height:58px;
+  background:
+    linear-gradient(180deg,rgba(30,41,59,.72),rgba(15,23,42,.55)) !important;
+  border-color:#3c495c !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.stat b{
+  font-size:18px !important;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.stat span{
+  font-size:9px !important;
+  letter-spacing:.2px;
+}
+
+/* Warnings/errors */
+.warning{
+  box-shadow:inset 3px 0 0 #f59e0b !important;
+}
+
+.error{
+  box-shadow:inset 3px 0 0 #ef4444 !important;
+}
+
+/* Tooltip */
+.pin-tooltip{
+  background:linear-gradient(180deg,#111b2b,#0b1220) !important;
+  border-color:#536176 !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.44) !important;
+  padding:9px 11px !important;
+}
+
+.hover-card-title{
+  font-size:12px !important;
+  letter-spacing:.1px;
+}
+
+.hover-card-label{
+  font-size:11px;
+  color:#86efac !important;
+  margin:2px 0;
+}
+
+/* Modal appearance only */
+.modal{
+  background:linear-gradient(180deg,#1e293b,#172033) !important;
+  border-color:#4a586b !important;
+  box-shadow:0 26px 76px rgba(0,0,0,.56) !important;
+}
+
+.modal-head{
+  padding-bottom:10px;
+  border-bottom:1px solid #344155;
+}
+
+.closebtn{
+  min-width:68px;
+  font-weight:760;
+  background:#0d1626 !important;
+}
+
+/* Wiring table */
+.wiring-table th{
+  background:#0d1626 !important;
+}
+
+.wiring-table tbody tr:nth-child(even){
+  background:rgba(255,255,255,.017);
+}
+
+/* Tools dropdown */
+.tools-menu{
+  background:linear-gradient(180deg,#111b2b,#0c1422) !important;
+  border-color:#4b586b !important;
+  box-shadow:0 16px 42px rgba(0,0,0,.45) !important;
+}
+
+.tools-menu button{
+  transition:background .12s ease,color .12s ease !important;
+}
+
+.tools-menu button:hover{
+  background:#263449 !important;
+}
+
+/* Find Free mode */
+.findfree-active .mpin,
+.findfree-active .apin{
+  opacity:.055 !important;
+  filter:saturate(.25) brightness(.78) !important;
+}
+
+.findfree-active .free-match{
+  opacity:1 !important;
+  filter:none !important;
+  outline:3px solid #84cc16 !important;
+  box-shadow:
+    0 0 0 2px rgba(132,204,22,.18),
+    0 0 18px rgba(132,204,22,.82) !important;
+  animation:freeGlow 1.35s ease-in-out infinite alternate;
+}
+
+@keyframes freeGlow{
+  from{box-shadow:0 0 0 2px rgba(132,204,22,.14),0 0 11px rgba(132,204,22,.52)}
+  to{box-shadow:0 0 0 2px rgba(132,204,22,.22),0 0 20px rgba(132,204,22,.88)}
+}
+
+/* Wiring mode */
+.wiring-active .mpin,
+.wiring-active .apin{
+  opacity:.07 !important;
+  filter:saturate(.28) brightness(.80) !important;
+}
+
+.wiring-active .wiring-match{
+  opacity:1 !important;
+  filter:none !important;
+  outline:3px solid #22d3ee !important;
+  box-shadow:
+    0 0 0 2px rgba(34,211,238,.18),
+    0 0 18px rgba(34,211,238,.80) !important;
+  animation:wiringGlow 1.35s ease-in-out infinite alternate;
+}
+
+@keyframes wiringGlow{
+  from{box-shadow:0 0 0 2px rgba(34,211,238,.14),0 0 11px rgba(34,211,238,.50)}
+  to{box-shadow:0 0 0 2px rgba(34,211,238,.22),0 0 20px rgba(34,211,238,.88)}
+}
+
+/* Scrollbars */
+*{
+  scrollbar-width:thin;
+  scrollbar-color:#526178 #162033;
+}
+
+*::-webkit-scrollbar{
+  width:9px;
+  height:9px;
+}
+
+*::-webkit-scrollbar-track{
+  background:#162033;
+}
+
+*::-webkit-scrollbar-thumb{
+  background:#526178;
+  border-radius:999px;
+  border:2px solid #162033;
+}
+
+*::-webkit-scrollbar-thumb:hover{
+  background:#64748b;
+}
+
+/* Responsive refinement only */
+@media(max-width:1280px){
+  .app{padding:14px !important}
+  .layout{gap:12px !important}
+  .panel{padding:11px !important}
+}
+
+@media(max-width:1080px){
+  .layout{grid-template-columns:1fr !important}
+}
+
+
+/* v10.8 light-theme repair */
+body.light{
+  --page:#eef2f7;
+  --panel:#ffffff;
+  --line:#cbd5e1;
+  --text:#0f172a;
+  --muted:#64748b;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(37,99,235,.08), transparent 32%),
+    radial-gradient(circle at 92% 2%, rgba(168,85,247,.06), transparent 27%),
+    #eef2f7 !important;
+  color:#0f172a !important;
+}
+
+body.light .panel{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.08) !important;
+}
+
+body.light .card{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#d7dee8 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+body.light .card h3{
+  color:#334155 !important;
+}
+
+body.light .subtitle,
+body.light .muted,
+body.light .privacy,
+body.light .free-status{
+  color:#64748b !important;
+}
+
+body.light .big,
+body.light #projectInfo b:first-child{
+  color:#0f172a !important;
+}
+
+body.light .search,
+body.light .free-assistant select{
+  background:#ffffff !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.06) !important;
+}
+
+body.light .search::placeholder{
+  color:#94a3b8 !important;
+}
+
+body.light .btn,
+body.light .pill,
+body.light .filter,
+body.light .copybtn,
+body.light .closebtn{
+  background:#ffffff !important;
+  color:#334155 !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .btn:hover,
+body.light .pill:hover,
+body.light .filter:hover,
+body.light .copybtn:hover,
+body.light .closebtn:hover{
+  background:#f1f5f9 !important;
+}
+
+body.light .pill.active,
+body.light .filter.active{
+  background:#334155 !important;
+  color:#ffffff !important;
+  border-color:#334155 !important;
+}
+
+body.light .filelabel{
+  background:linear-gradient(180deg,#2f72f3,#1d4ed8) !important;
+  color:#ffffff !important;
+  border-color:#3b82f6 !important;
+}
+
+body.light .status{
+  background:#ffffff !important;
+  color:#475569 !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .drop{
+  background:#f8fafc !important;
+  color:#64748b !important;
+  border-color:#94a3b8 !important;
+}
+
+body.light .stat{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#d7dee8 !important;
+}
+
+body.light .tag{
+  color:#475569 !important;
+  border-color:#cbd5e1 !important;
+  background:#ffffff !important;
+}
+
+body.light .code{
+  background:#0f172a !important;
+  color:#d1fae5 !important;
+}
+
+body.light .modal{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .modal-head{
+  border-bottom-color:#d7dee8 !important;
+}
+
+body.light .help-steps,
+body.light .empty-state{
+  color:#64748b !important;
+}
+
+body.light .wiring-list{
+  border-color:#cbd5e1 !important;
+}
+
+body.light .wiring-table th{
+  background:#e2e8f0 !important;
+  color:#0f172a !important;
+}
+
+body.light .wiring-table td{
+  border-bottom-color:#e2e8f0 !important;
+}
+
+body.light .wiring-table tr[data-pin]:hover{
+  background:#eef2ff !important;
+}
+
+body.light .tools-menu{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 16px 36px rgba(15,23,42,.16) !important;
+}
+
+body.light .tools-menu button{
+  color:#334155 !important;
+}
+
+body.light .tools-menu button:hover{
+  background:#eef2f7 !important;
+}
+
+body.light .pin-tooltip{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.18) !important;
+}
+
+body.light .hover-card-line{
+  color:#475569 !important;
+}
+
+body.light .hover-card-label{
+  color:#15803d !important;
+}
+
+body.light *{
+  scrollbar-color:#94a3b8 #e2e8f0;
+}
+
+body.light *::-webkit-scrollbar-track{
+  background:#e2e8f0;
+}
+
+body.light *::-webkit-scrollbar-thumb{
+  background:#94a3b8;
+  border-color:#e2e8f0;
+}
+
+
+/* Desktop embedding: IOC files are managed by NucleoPin Desktop. */
+#drop{display:none !important}
+
+
+/* =========================================================
+   v0.3.13 — Project View + Filter compatibility
+   ========================================================= */
+
+/* A filter-hidden pin must stay hidden even when Project mode normally
+   forces configured signal classes to opacity:1!important. */
+.board .mpin.filter-hidden,
+.board .apin.filter-hidden,
+.board.projectmode .mpin.filter-hidden,
+.board.projectmode .apin.filter-hidden{
+  opacity:.08!important;
+}
+
+/* Normal Project mode: configured pins remain prominent. */
+.board.projectmode[data-active-filter="all"] .mpin.filter-visible:not(.unconfigured),
+.board.projectmode[data-active-filter="all"] .apin.filter-visible:not(.unconfigured){
+  opacity:1!important;
+}
+
+/* When a specific filter is selected, matching pins are fully visible. */
+.board.projectmode[data-active-filter="used"] .filter-visible,
+.board.projectmode[data-active-filter="gpio"] .filter-visible,
+.board.projectmode[data-active-filter="comm"] .filter-visible,
+.board.projectmode[data-active-filter="analog"] .filter-visible{
+  opacity:1!important;
+}
+
+/* Free is special: Project mode normally dims unconfigured pins.
+   Selecting Free should intentionally bring those free MCU pins forward. */
+.board.projectmode[data-active-filter="free"] .mpin.filter-visible,
+.board.projectmode[data-active-filter="free"] .apin.filter-visible{
+  opacity:1!important;
+}
+
+/* Make the mode/filter relationship easier to understand visually. */
+.viewbtn.active{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.13);
+}
+
+
+/* Desktop peripheral dashboard highlight */
+.desktop-peripheral-highlight{
+  opacity:1!important;
+  outline:3px solid #22d3ee!important;
+  box-shadow:0 0 13px rgba(34,211,238,.9)!important;
+  z-index:40!important;
+}
+
+
+/* =========================================================
+   v0.7.0 — Approved Real Board integration
+   ========================================================= */
+
+.display-mode-toggle{
+  border-color:#38526f!important;
+}
+
+/* Classic is the existing, known-good pinout. */
+#board[data-display-mode="classic"] .real-board-layer{
+  display:none!important;
+}
+
+/* Real Board takes over the main display and hides duplicate schematic blocks. */
+#board[data-display-mode="real"]{
+  background:#eef2f0!important;
+  min-height:650px;
+}
+#board[data-display-mode="real"] > .board-title,
+#board[data-display-mode="real"] .connector,
+#board[data-display-mode="real"] .arduino-connector,
+#board[data-display-mode="real"] .connector-title,
+#board[data-display-mode="real"] .chip{
+  display:none!important;
+}
+
+.real-board-layer{
+  position:absolute;
+  inset:12px 12px 42px;
+  z-index:20;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 220px;
+  gap:12px;
+  align-items:center;
+  pointer-events:none;
+}
+
+.real-board-photo-wrap{
+  position:relative;
+  width:min(100%,540px);
+  margin:auto;
+  pointer-events:auto;
+}
+
+.real-board-photo{
+  display:block;
+  width:100%;
+  height:auto;
+  user-select:none;
+  -webkit-user-drag:none;
+  border-radius:6px;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.13));
+}
+
+.real-board-hotspots{
+  position:absolute;
+  inset:0;
+}
+
+.rb-hotspot{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  border:1.5px solid transparent;
+  background:transparent;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  opacity:0;
+  z-index:5;
+  transition:opacity .07s ease,transform .07s ease,box-shadow .07s ease;
+}
+.rb-hotspot::after{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:50%;
+  background:#22c55e;
+  opacity:0;
+}
+
+/* Physical = clean photograph. Hit targets exist but marks are hidden until interaction. */
+#board[data-display-mode="real"]:not(.projectmode) .rb-hotspot{
+  opacity:0;
+}
+#board[data-display-mode="real"]:not(.projectmode) .rb-hotspot:hover,
+#board[data-display-mode="real"]:not(.projectmode) .rb-hotspot.hovered,
+#board[data-display-mode="real"]:not(.projectmode) .rb-hotspot.peer-hover,
+#board[data-display-mode="real"]:not(.projectmode) .rb-hotspot.selected{
+  opacity:1;
+}
+
+/* Project = only configured IOC sockets stay visible. */
+#board[data-display-mode="real"].projectmode .rb-hotspot.configured{
+  opacity:1;
+}
+#board[data-display-mode="real"].projectmode .rb-hotspot.configured::after{
+  opacity:.96;
+}
+#board[data-display-mode="real"].projectmode .rb-hotspot.free{
+  opacity:0;
+}
+
+.rb-hotspot:hover,
+.rb-hotspot.hovered,
+.rb-hotspot.peer-hover{
+  opacity:1!important;
+  transform:translate(-50%,-50%) scale(1.45);
+  border-color:#38bdf8;
+  background:rgba(56,189,248,.13);
+  box-shadow:0 0 0 3px rgba(56,189,248,.16);
+}
+.rb-hotspot.selected{
+  opacity:1!important;
+  transform:translate(-50%,-50%) scale(1.5);
+  border-color:#facc15;
+  background:rgba(250,204,21,.14);
+  box-shadow:0 0 0 3px rgba(250,204,21,.18);
+}
+
+/* Function rings in Project mode */
+.rb-hotspot.rb-i2c::after{background:#a855f7}
+.rb-hotspot.rb-spi::after{background:#f59e0b}
+.rb-hotspot.rb-uart::after{background:#eab308}
+.rb-hotspot.rb-adc::after{background:#06b6d4}
+.rb-hotspot.rb-timer::after{background:#ec4899}
+.rb-hotspot.rb-gpio::after{background:#22c55e}
+.rb-hotspot.rb-used::after{background:#22c55e}
+
+/* Compact board-only HUD. No duplicate outer pinout. */
+.real-board-hud{
+  pointer-events:auto;
+  background:#101b2b;
+  border:1px solid #32445d;
+  border-radius:10px;
+  padding:12px;
+  color:#e9f1fb;
+  align-self:center;
+}
+.real-board-hud-title{
+  font-size:15px;
+  font-weight:800;
+  margin-bottom:3px;
+}
+.real-board-hud-sub{
+  font-size:8px;
+  color:#8fa2bb;
+  margin-bottom:10px;
+}
+.real-board-hud-grid{
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr);
+  gap:6px;
+  font-size:8px;
+}
+.real-board-hud-grid span{color:#8fa2bb}
+.real-board-hud-grid b{
+  min-width:0;
+  color:#dce8f6;
+  overflow-wrap:anywhere;
+}
+
+/* On narrower visualizer panes, put info below board. */
+@media(max-width:1050px){
+  .real-board-layer{
+    grid-template-columns:1fr;
+    overflow:auto;
+  }
+  .real-board-hud{
+    width:min(100%,540px);
+    margin:auto;
+  }
+}
+
+/* Existing print path remains Classic. */
+@media print{
+  .real-board-layer{
+    display:none!important;
+  }
+  #board .connector,
+  #board .arduino-connector,
+  #board .connector-title,
+  #board .chip{
+    display:block!important;
+  }
+}
+
+
+/* =========================================================
+   v0.7.1 — Real Board layout fix
+   Real Board fully replaces Classic content instead of
+   stacking over it.
+   ========================================================= */
+
+#board{
+  position:relative;
+}
+
+/* REAL BOARD MODE */
+#board[data-display-mode="real"]{
+  min-height:690px!important;
+  height:auto!important;
+  overflow:hidden!important;
+  background:#eef2f0!important;
+  border-radius:10px!important;
+}
+
+/* Hide every Classic board child except the Real Board layer. */
+#board[data-display-mode="real"] > *:not(.real-board-layer){
+  display:none!important;
+}
+
+/* The real board fills the board canvas rather than floating over it. */
+#board[data-display-mode="real"] .real-board-layer{
+  display:grid!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-height:690px!important;
+  padding:22px!important;
+  grid-template-columns:minmax(0,1fr) 230px!important;
+  gap:20px!important;
+  align-items:center!important;
+  pointer-events:auto!important;
+  z-index:1!important;
+}
+
+/* Keep photo fully contained and centered. */
+#board[data-display-mode="real"] .real-board-photo-wrap{
+  width:min(100%,560px)!important;
+  max-width:560px!important;
+  margin:0 auto!important;
+  align-self:center!important;
+}
+
+#board[data-display-mode="real"] .real-board-photo{
+  width:100%!important;
+  height:auto!important;
+  display:block!important;
+  border-radius:6px!important;
+}
+
+/* HUD remains inside white visualizer canvas. */
+#board[data-display-mode="real"] .real-board-hud{
+  position:relative!important;
+  align-self:center!important;
+  width:100%!important;
+  max-width:230px!important;
+  margin:0!important;
+}
+
+/* CLASSIC MODE */
+#board[data-display-mode="classic"] .real-board-layer{
+  display:none!important;
+}
+
+/* Restore all normal Classic children when switching back. */
+#board[data-display-mode="classic"] > .board-title,
+#board[data-display-mode="classic"] > .connector,
+#board[data-display-mode="classic"] > .arduino-connector,
+#board[data-display-mode="classic"] > .connector-title,
+#board[data-display-mode="classic"] > .chip{
+  display:block!important;
+}
+
+/* Classic connector children may be positioned/flex items; don't force
+   layout modes beyond restoring visibility. */
+#board[data-display-mode="classic"]{
+  min-height:0!important;
+  overflow:visible!important;
+}
+
+/* Narrow desktop window: HUD moves below image instead of escaping panel. */
+@media(max-width:1100px){
+  #board[data-display-mode="real"] .real-board-layer{
+    grid-template-columns:1fr!important;
+    align-content:start!important;
+  }
+  #board[data-display-mode="real"] .real-board-hud{
+    max-width:560px!important;
+    margin:0 auto!important;
+  }
+}
+
+/* Printing is always Classic and unaffected. */
+@media print{
+  .real-board-layer{display:none!important}
+  #board[data-display-mode="real"] > *:not(.real-board-layer){display:initial}
+}
+
+@media print{
+  #board .real-board-layer{
+    display:none!important;
+  }
+}
+
+
+/* =========================================================
+   v0.7.2 — Real Board hotspot calibration
+   Smaller markers + tighter socket alignment
+   ========================================================= */
+
+/* Normal hotspot is intentionally tiny so the physical socket remains visible. */
+#board[data-display-mode="real"] .rb-hotspot{
+  width:7px!important;
+  height:7px!important;
+  border-width:1px!important;
+}
+
+/* Configured project dot is smaller too. */
+#board[data-display-mode="real"] .rb-hotspot::after{
+  inset:1.7px!important;
+}
+
+/* Hover = noticeable but no longer covers the surrounding header. */
+#board[data-display-mode="real"] .rb-hotspot:hover,
+#board[data-display-mode="real"] .rb-hotspot.hovered,
+#board[data-display-mode="real"] .rb-hotspot.peer-hover{
+  transform:translate(-50%,-50%) scale(1.45)!important;
+  border-width:1.2px!important;
+  box-shadow:0 0 0 2px rgba(56,189,248,.18)!important;
+}
+
+/* Selected = slightly stronger than hover but still socket-sized. */
+#board[data-display-mode="real"] .rb-hotspot.selected{
+  transform:translate(-50%,-50%) scale(1.55)!important;
+  border-width:1.2px!important;
+  box-shadow:0 0 0 2px rgba(250,204,21,.20)!important;
+}
+
+/* The small project marker should not visually fill the whole header hole. */
+#board[data-display-mode="real"].projectmode .rb-hotspot.configured::after{
+  opacity:.9!important;
+}
+
+/* Photo receives a touch more space; makes physical sockets easier to inspect. */
+#board[data-display-mode="real"] .real-board-photo-wrap{
+  width:min(100%,590px)!important;
+  max-width:590px!important;
+}
+
+
+
+
+/* =========================================================
+   v0.8.1 — Real Board filters and project dots
+   ========================================================= */
+
+/* Keep invisible sockets clickable, but only matching filters draw markers. */
+#board[data-display-mode="real"] .rb-hotspot{
+  opacity:0!important;
+}
+
+/* ALL / USED / FREE / GPIO / COMMS / ADC matching sockets. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match{
+  opacity:1!important;
+}
+
+/* Free MCU pins use a neutral dot. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match.free::after{
+  opacity:.72!important;
+  background:#64748b!important;
+}
+
+/* Configured pins use their IOC function colour. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match.configured::after{
+  opacity:.94!important;
+}
+
+/* Search result gets a cyan emphasis while preserving the underlying pin dot. */
+#board[data-display-mode="real"] .rb-hotspot.rb-search-match{
+  border-color:#22d3ee!important;
+  box-shadow:0 0 0 2px rgba(34,211,238,.20)!important;
+}
+
+/* Hover and selected pins always win over the current filter. */
+#board[data-display-mode="real"] .rb-hotspot:hover,
+#board[data-display-mode="real"] .rb-hotspot.hovered,
+#board[data-display-mode="real"] .rb-hotspot.peer-hover,
+#board[data-display-mode="real"] .rb-hotspot.selected{
+  opacity:1!important;
+}
+
+/* Tiny dot in normal filter view; ring only appears when interacting. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match:not(:hover):not(.hovered):not(.selected){
+  border-color:transparent!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+/* Project + All explicitly shows all configured IOC pins as coloured dots. */
+#board[data-display-mode="real"].projectmode[data-active-filter="all"] .rb-hotspot.configured{
+  opacity:1!important;
+}
+#board[data-display-mode="real"].projectmode[data-active-filter="all"] .rb-hotspot.configured::after{
+  opacity:.94!important;
+}
+
+/* Free must still work while Project view is selected, like Classic does. */
+#board[data-display-mode="real"].projectmode[data-active-filter="free"] .rb-hotspot.free.rb-filter-match{
+  opacity:1!important;
+}
+
+/* Helpful HUD status: the displayed information stays visible even when filtered. */
+#board[data-display-mode="real"] .real-board-hud{
+  z-index:30!important;
+}
+
+
+/* =========================================================
+   v0.8.2 — Toolbar drives Real Board exactly like Classic
+   ========================================================= */
+
+#board[data-display-mode="real"] .rb-hotspot{
+  opacity:0!important;
+}
+
+/* Any hotspot that passes the active toolbar filter is visible. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match{
+  opacity:1!important;
+}
+
+/* Physical + All: subtle neutral dots for all MCU sockets. */
+#board[data-display-mode="real"]:not(.projectmode)[data-active-filter="all"] .rb-hotspot.rb-filter-match::after{
+  opacity:.45!important;
+  background:#64748b!important;
+}
+
+/* Used / Project / category filters: configured pins retain function colours. */
+#board[data-display-mode="real"] .rb-hotspot.rb-filter-match.configured::after{
+  opacity:.95!important;
+}
+
+/* Free filter is intentionally neutral. */
+#board[data-display-mode="real"][data-active-filter="free"] .rb-hotspot.rb-filter-match.free::after{
+  opacity:.7!important;
+  background:#64748b!important;
+}
+
+/* Search result outline. */
+#board[data-display-mode="real"] .rb-hotspot.rb-search-match{
+  opacity:1!important;
+  border-color:#22d3ee!important;
+  box-shadow:0 0 0 2px rgba(34,211,238,.22)!important;
+}
+
+/* Interaction always wins over filters. */
+#board[data-display-mode="real"] .rb-hotspot:hover,
+#board[data-display-mode="real"] .rb-hotspot.hovered,
+#board[data-display-mode="real"] .rb-hotspot.peer-hover,
+#board[data-display-mode="real"] .rb-hotspot.selected{
+  opacity:1!important;
+}
+
+
+/* =========================================================
+   v0.8.3 — deterministic Real Board dot visibility
+   ========================================================= */
+
+/* Base state: hidden */
+#board[data-display-mode="real"] .rb-hotspot{
+  opacity:0!important;
+}
+
+/* Anything marked visible by JS must show. */
+#board[data-display-mode="real"] .rb-hotspot.rb-visible{
+  opacity:1!important;
+}
+
+/* Every visible MCU socket gets a tiny neutral dot in Physical/All. */
+#board[data-display-mode="real"]:not(.projectmode)[data-active-filter="all"] .rb-hotspot.rb-visible::after{
+  opacity:.72!important;
+  background:#64748b!important;
+}
+
+/* Configured sockets keep their function color. */
+#board[data-display-mode="real"] .rb-hotspot.rb-visible.configured::after{
+  opacity:.96!important;
+}
+
+/* Free filter stays neutral. */
+#board[data-display-mode="real"][data-active-filter="free"] .rb-hotspot.rb-visible.free::after{
+  opacity:.78!important;
+  background:#64748b!important;
+}
+
+/* Used/project/category filters use the configured color dot. */
+#board[data-display-mode="real"][data-active-filter="used"] .rb-hotspot.rb-visible.configured::after,
+#board[data-display-mode="real"][data-active-filter="gpio"] .rb-hotspot.rb-visible.configured::after,
+#board[data-display-mode="real"][data-active-filter="comm"] .rb-hotspot.rb-visible.configured::after,
+#board[data-display-mode="real"][data-active-filter="analog"] .rb-hotspot.rb-visible.configured::after,
+#board[data-display-mode="real"].projectmode[data-active-filter="all"] .rb-hotspot.rb-visible.configured::after{
+  opacity:.96!important;
+}
+
+/* Search gets cyan ring. */
+#board[data-display-mode="real"] .rb-hotspot.rb-search-match{
+  border-color:#22d3ee!important;
+  box-shadow:0 0 0 2px rgba(34,211,238,.22)!important;
+}
+
+/* Hover / select always show */
+#board[data-display-mode="real"] .rb-hotspot:hover,
+#board[data-display-mode="real"] .rb-hotspot.hovered,
+#board[data-display-mode="real"] .rb-hotspot.peer-hover,
+#board[data-display-mode="real"] .rb-hotspot.selected{
+  opacity:1!important;
+}
+
+</style></head>
+<body>
+<div class="app">
+<div class="top">
+ <div><h1>NUCLEO-F401RE / F411RE IOC Pinout</h1><div class="subtitle">Interactive CubeMX project visualizer for the Nucleo-64 MB1136 layout. · v10.8 SAFE</div></div>
+ <div class="actions">
+  <label class="filelabel">Upload .ioc<input id="file" type="file" accept=".ioc,text/plain"></label>
+  <button class="btn" id="clear">Clear</button>
+  <button class="btn" id="print">Print Pinout</button>
+  <button class="btn" id="theme">Light page</button><div class="tools-wrap">
+ <button class="btn" id="safeToolsBtn" type="button">Tools v</button>
+ <div class="tools-menu" id="safeToolsMenu">
+  <button type="button" data-proxy="checkProject">Check Project</button>
+  <button type="button" data-proxy="wiringMode">Wiring Mode</button>
+  <button type="button" data-proxy="wiringListBtn">Wiring List</button>
+  <button type="button" data-proxy="print">Print Pinout</button>
+  <button type="button" data-proxy="helpBtn">Help / About</button>
+ </div>
+</div><button class="btn" id="helpBtn">Help</button>
+  <span id="status" class="status">No IOC loaded</span>
+ </div>
+</div>
+<div class="layout">
+<main class="panel">
+ <div id="drop" class="drop">Drop an F401RE or F411RE .ioc file here — the file stays in your browser</div>
+ <div class="toolbar">
+  <input id="search" class="search" placeholder="Search pin, Arduino name, label or CubeMX signal...">
+  <button class="pill active viewbtn" data-view="physical">Physical</button>
+  <button class="pill viewbtn" data-view="project">Project</button>
+<button id="displayModeToggle" class="pill display-mode-toggle" type="button"
+        title="Switch between Real Board and Classic Pinout">
+  <span id="displayModeToggleText">Real Board</span>
+</button>
+  <button class="pill filter active" data-filter="all">All</button><button class="pill filter" data-filter="used">Used</button><button class="pill filter" data-filter="free">Free</button>
+  <button class="pill filter" data-filter="gpio">GPIO</button><button class="pill filter" data-filter="comm">Comms</button><button class="pill filter" data-filter="analog">ADC</button><button class="pill" id="wiringMode">Wiring Mode</button><button class="pill" id="checkProject">Check Project</button><button class="pill" id="wiringListBtn">Wiring List</button>
+ </div>
+ <div id="wiringBanner" class="wiring-banner">Wiring Mode: click any MCU/Arduino pin to highlight every physical header location connected to the same MCU signal.</div>
+ <div id="board" class="board">
+
+<div id="realBoardLayer" class="real-board-layer" aria-label="Interactive real Nucleo board">
+  <div id="realBoardPhotoWrap" class="real-board-photo-wrap">
+    <img class="real-board-photo" src="./assets/nucleo-f401re-top.png" alt="NUCLEO-F401RE top view">
+    <div id="realBoardHotspots" class="real-board-hotspots"></div>
+  </div>
+
+  <div id="realBoardHud" class="real-board-hud" aria-live="polite">
+    <div class="real-board-hud-title" id="realBoardHudTitle">Select a socket</div>
+    <div class="real-board-hud-sub" id="realBoardHudSub">Hover or click a physical socket.</div>
+    <div class="real-board-hud-grid">
+      <span>MCU</span><b id="realBoardHudPin">—</b>
+      <span>Function</span><b id="realBoardHudSignal">—</b>
+      <span>IOC label</span><b id="realBoardHudLabel">—</b>
+      <span>Locations</span><b id="realBoardHudLocations">—</b>
+    </div>
+  </div>
+</div>
+
+  <div id="boardTitle" class="board-title">NUCLEO-F4xxRE</div>
+  <div class="board-grid">
+   <div class="cluster leftcluster">
+    <div><div class="connector-title">CN7</div><div id="cn7"></div></div>
+    <div class="leftArduino"><div class="connector-title">CN6</div><div id="cn6"></div><div class="gap"></div><div class="connector-title">CN8</div><div id="cn8"></div></div>
+   </div>
+   <div class="center"><div class="chip">STM32F4</div></div>
+   <div class="cluster rightcluster">
+    <div class="rightArduino"><div class="connector-title">CN5</div><div id="cn5"></div><div class="gap"></div><div class="connector-title">CN9</div><div id="cn9"></div></div>
+    <div><div class="connector-title">CN10</div><div id="cn10"></div></div>
+   </div>
+  </div>
+  <div class="legend">
+   <span class="key ka">Arduino</span><span class="key km">Morpho</span><span class="key ki">Input</span><span class="key ko">Output</span>
+   <span class="key ks">SPI</span><span class="key k2">I²C</span><span class="key ku">UART</span><span class="key kad">ADC</span><span class="key kt">Timer/PWM</span>
+  </div>
+ </div>
+ <div class="privacy">Privacy: IOC files are parsed locally with JavaScript. Nothing is uploaded anywhere.</div>
+</main>
+
+<aside class="panel">
+ <div id="compat" class="card"><h3>Project / compatibility</h3><div id="projectInfo" class="muted">Upload an .ioc file to begin.</div></div>
+ <div class="card">
+  <h3>Project statistics</h3>
+  <div class="stats-grid">
+   <div class="stat"><b id="statUsed">0</b><span>Used</span></div>
+   <div class="stat"><b id="statFree">0</b><span>Free GPIO</span></div>
+   <div class="stat"><b id="statOut">0</b><span>Outputs</span></div>
+   <div class="stat"><b id="statIn">0</b><span>Inputs / EXTI</span></div>
+   <div class="stat"><b id="statComm">0</b><span>Comms</span></div>
+   <div class="stat"><b id="statAnalog">0</b><span>ADC</span></div>
+  </div>
+ </div>
+ <div class="card">
+  <h3>Project check</h3>
+  <div id="checkSummary" class="muted">Load an IOC, then click Check Project.</div>
+  <div id="checkList" class="check-list"></div>
+ </div>
+
+ <div class="card">
+  <h3>Find Free Pin</h3>
+  <div class="muted">Highlight unused expansion pins suitable for a new function.</div>
+  <div class="free-assistant">
+   <select id="freeType">
+    <option value="">Choose function...</option>
+    <option value="gpio">GPIO</option>
+    <option value="adc">ADC</option>
+    <option value="pwm">PWM / Timer</option>
+    <option value="uart">UART</option>
+    <option value="i2c">I2C</option>
+    <option value="spi">SPI</option>
+   </select>
+   <button class="btn" id="findFreeBtn">Find Free</button>
+  </div>
+  <div id="freeStatus" class="free-status">Load an IOC first.</div>
+ </div>
+
+ <div class="card"><h3>Pin inspector</h3><div id="pinTitle" class="big">Select a pin</div><div id="pinMeta" class="muted">Click a connector pin.</div><div id="tags"></div></div>
+ <div id="warn" class="card warning" style="display:none"><h3>Board consideration</h3><div id="warnText" class="muted" style="color:inherit"></div></div>
+ <div class="card">
+  <h3>CubeMX configuration</h3>
+  <div id="cube" class="muted">Upload an IOC and select a pin.</div>
+<div class="ioc-readonly-note">
+  Read-only: NucleoPin never modifies your .ioc file.
+</div>
+  </div>
+</div>
+ <div class="card"><h3>Physical locations</h3><div id="locations" class="muted">Select a pin.</div></div>
+ <div class="card"><h3>HAL quick reference</h3><div id="code" class="code">// Select a pin.</div><div id="copyrow" class="copyrow"></div></div>
+ <div class="card"><h3>Used pins</h3><div id="usedTable" class="tablewrap muted">No project loaded.</div></div>
+</aside>
+</div>
+</div>
+<script>
+const P={"cn7": [[1, "PC10"], [2, "PC11"], [3, "PC12"], [4, "PD2"], [5, "VDD"], [6, "E5V"], [7, "BOOT0"], [8, "GND"], [9, "NC"], [10, "NC"], [11, "NC"], [12, "IOREF"], [13, "PA13"], [14, "RESET"], [15, "PA14"], [16, "+3V3"], [17, "PA15"], [18, "+5V"], [19, "GND"], [20, "GND"], [21, "PB7"], [22, "GND"], [23, "PC13"], [24, "VIN"], [25, "PC14"], [26, "NC"], [27, "PC15"], [28, "PA0"], [29, "PH0"], [30, "PA1"], [31, "PH1"], [32, "PA4"], [33, "VBAT"], [34, "PB0"], [35, "PC2"], [36, "PC1"], [37, "PC3"], [38, "PC0"]], "cn10": [[1, "PC9"], [2, "PC8"], [3, "PB8"], [4, "PC6"], [5, "PB9"], [6, "PC5"], [7, "AVDD"], [8, "U5V"], [9, "GND"], [10, "NC"], [11, "PA5"], [12, "PA12"], [13, "PA6"], [14, "PA11"], [15, "PA7"], [16, "PB12"], [17, "PB6"], [18, "NC"], [19, "PC7"], [20, "GND"], [21, "PA9"], [22, "PB2"], [23, "PA8"], [24, "PB1"], [25, "PB10"], [26, "PB15"], [27, "PB4"], [28, "PB14"], [29, "PB5"], [30, "PB13"], [31, "PB3"], [32, "AGND"], [33, "PA10"], [34, "PC4"], [35, "PA2"], [36, "NC"], [37, "PA3"], [38, "NC"]], "arduino": {"CN6": [[1, "NC", "NC"], [2, "IOREF", "IOREF"], [3, "RESET", "RESET"], [4, "+3V3", "+3V3"], [5, "+5V", "+5V"], [6, "GND", "GND"], [7, "GND", "GND"], [8, "VIN", "VIN"]], "CN8": [[1, "A0", "PA0"], [2, "A1", "PA1"], [3, "A2", "PA4"], [4, "A3", "PB0"], [5, "A4", "PC1"], [6, "A5", "PC0"]], "CN5": [[10, "D15", "PB8"], [9, "D14", "PB9"], [8, "AVDD", "AVDD"], [7, "GND", "GND"], [6, "D13", "PA5"], [5, "D12", "PA6"], [4, "D11", "PA7"], [3, "D10", "PB6"], [2, "D9", "PC7"], [1, "D8", "PA9"]], "CN9": [[8, "D7", "PA8"], [7, "D6", "PB10"], [6, "D5", "PB4"], [5, "D4", "PB5"], [4, "D3", "PB3"], [3, "D2", "PA10"], [2, "D1", "PA2"], [1, "D0", "PA3"]]}, "aliases": {"PA0": ["A0"], "PA1": ["A1"], "PA4": ["A2"], "PB0": ["A3"], "PC1": ["A4"], "PC0": ["A5"], "PB8": ["D15"], "PB9": ["D14"], "PA5": ["D13"], "PA6": ["D12"], "PA7": ["D11"], "PB6": ["D10"], "PC7": ["D9"], "PA9": ["D8"], "PA8": ["D7"], "PB10": ["D6"], "PB4": ["D5"], "PB5": ["D4"], "PB3": ["D3"], "PA10": ["D2"], "PA2": ["D1"], "PA3": ["D0"]}, "locations": {"PC10": [{"connector": "CN7", "pin": 1, "label": "PC10"}], "PC11": [{"connector": "CN7", "pin": 2, "label": "PC11"}], "PC12": [{"connector": "CN7", "pin": 3, "label": "PC12"}], "PD2": [{"connector": "CN7", "pin": 4, "label": "PD2"}], "VDD": [{"connector": "CN7", "pin": 5, "label": "VDD"}], "E5V": [{"connector": "CN7", "pin": 6, "label": "E5V"}], "BOOT0": [{"connector": "CN7", "pin": 7, "label": "BOOT0"}], "GND": [{"connector": "CN7", "pin": 8, "label": "GND"}, {"connector": "CN7", "pin": 19, "label": "GND"}, {"connector": "CN7", "pin": 20, "label": "GND"}, {"connector": "CN7", "pin": 22, "label": "GND"}, {"connector": "CN10", "pin": 9, "label": "GND"}, {"connector": "CN10", "pin": 20, "label": "GND"}, {"connector": "CN6", "pin": 6, "label": "GND"}, {"connector": "CN6", "pin": 7, "label": "GND"}, {"connector": "CN5", "pin": 7, "label": "GND"}], "NC": [{"connector": "CN7", "pin": 9, "label": "NC"}, {"connector": "CN7", "pin": 10, "label": "NC"}, {"connector": "CN7", "pin": 11, "label": "NC"}, {"connector": "CN7", "pin": 26, "label": "NC"}, {"connector": "CN10", "pin": 10, "label": "NC"}, {"connector": "CN10", "pin": 18, "label": "NC"}, {"connector": "CN10", "pin": 36, "label": "NC"}, {"connector": "CN10", "pin": 38, "label": "NC"}, {"connector": "CN6", "pin": 1, "label": "NC"}], "IOREF": [{"connector": "CN7", "pin": 12, "label": "IOREF"}, {"connector": "CN6", "pin": 2, "label": "IOREF"}], "PA13": [{"connector": "CN7", "pin": 13, "label": "PA13"}], "RESET": [{"connector": "CN7", "pin": 14, "label": "RESET"}, {"connector": "CN6", "pin": 3, "label": "RESET"}], "PA14": [{"connector": "CN7", "pin": 15, "label": "PA14"}], "+3V3": [{"connector": "CN7", "pin": 16, "label": "+3V3"}, {"connector": "CN6", "pin": 4, "label": "+3V3"}], "PA15": [{"connector": "CN7", "pin": 17, "label": "PA15"}], "+5V": [{"connector": "CN7", "pin": 18, "label": "+5V"}, {"connector": "CN6", "pin": 5, "label": "+5V"}], "PB7": [{"connector": "CN7", "pin": 21, "label": "PB7"}], "PC13": [{"connector": "CN7", "pin": 23, "label": "PC13"}], "VIN": [{"connector": "CN7", "pin": 24, "label": "VIN"}, {"connector": "CN6", "pin": 8, "label": "VIN"}], "PC14": [{"connector": "CN7", "pin": 25, "label": "PC14"}], "PC15": [{"connector": "CN7", "pin": 27, "label": "PC15"}], "PA0": [{"connector": "CN7", "pin": 28, "label": "PA0"}, {"connector": "CN8", "pin": 1, "label": "A0"}], "PH0": [{"connector": "CN7", "pin": 29, "label": "PH0"}], "PA1": [{"connector": "CN7", "pin": 30, "label": "PA1"}, {"connector": "CN8", "pin": 2, "label": "A1"}], "PH1": [{"connector": "CN7", "pin": 31, "label": "PH1"}], "PA4": [{"connector": "CN7", "pin": 32, "label": "PA4"}, {"connector": "CN8", "pin": 3, "label": "A2"}], "VBAT": [{"connector": "CN7", "pin": 33, "label": "VBAT"}], "PB0": [{"connector": "CN7", "pin": 34, "label": "PB0"}, {"connector": "CN8", "pin": 4, "label": "A3"}], "PC2": [{"connector": "CN7", "pin": 35, "label": "PC2"}], "PC1": [{"connector": "CN7", "pin": 36, "label": "PC1"}, {"connector": "CN8", "pin": 5, "label": "A4"}], "PC3": [{"connector": "CN7", "pin": 37, "label": "PC3"}], "PC0": [{"connector": "CN7", "pin": 38, "label": "PC0"}, {"connector": "CN8", "pin": 6, "label": "A5"}], "PC9": [{"connector": "CN10", "pin": 1, "label": "PC9"}], "PC8": [{"connector": "CN10", "pin": 2, "label": "PC8"}], "PB8": [{"connector": "CN10", "pin": 3, "label": "PB8"}, {"connector": "CN5", "pin": 10, "label": "D15"}], "PC6": [{"connector": "CN10", "pin": 4, "label": "PC6"}], "PB9": [{"connector": "CN10", "pin": 5, "label": "PB9"}, {"connector": "CN5", "pin": 9, "label": "D14"}], "PC5": [{"connector": "CN10", "pin": 6, "label": "PC5"}], "AVDD": [{"connector": "CN10", "pin": 7, "label": "AVDD"}, {"connector": "CN5", "pin": 8, "label": "AVDD"}], "U5V": [{"connector": "CN10", "pin": 8, "label": "U5V"}], "PA5": [{"connector": "CN10", "pin": 11, "label": "PA5"}, {"connector": "CN5", "pin": 6, "label": "D13"}], "PA12": [{"connector": "CN10", "pin": 12, "label": "PA12"}], "PA6": [{"connector": "CN10", "pin": 13, "label": "PA6"}, {"connector": "CN5", "pin": 5, "label": "D12"}], "PA11": [{"connector": "CN10", "pin": 14, "label": "PA11"}], "PA7": [{"connector": "CN10", "pin": 15, "label": "PA7"}, {"connector": "CN5", "pin": 4, "label": "D11"}], "PB12": [{"connector": "CN10", "pin": 16, "label": "PB12"}], "PB6": [{"connector": "CN10", "pin": 17, "label": "PB6"}, {"connector": "CN5", "pin": 3, "label": "D10"}], "PC7": [{"connector": "CN10", "pin": 19, "label": "PC7"}, {"connector": "CN5", "pin": 2, "label": "D9"}], "PA9": [{"connector": "CN10", "pin": 21, "label": "PA9"}, {"connector": "CN5", "pin": 1, "label": "D8"}], "PB2": [{"connector": "CN10", "pin": 22, "label": "PB2"}], "PA8": [{"connector": "CN10", "pin": 23, "label": "PA8"}, {"connector": "CN9", "pin": 8, "label": "D7"}], "PB1": [{"connector": "CN10", "pin": 24, "label": "PB1"}], "PB10": [{"connector": "CN10", "pin": 25, "label": "PB10"}, {"connector": "CN9", "pin": 7, "label": "D6"}], "PB15": [{"connector": "CN10", "pin": 26, "label": "PB15"}], "PB4": [{"connector": "CN10", "pin": 27, "label": "PB4"}, {"connector": "CN9", "pin": 6, "label": "D5"}], "PB14": [{"connector": "CN10", "pin": 28, "label": "PB14"}], "PB5": [{"connector": "CN10", "pin": 29, "label": "PB5"}, {"connector": "CN9", "pin": 5, "label": "D4"}], "PB13": [{"connector": "CN10", "pin": 30, "label": "PB13"}], "PB3": [{"connector": "CN10", "pin": 31, "label": "PB3"}, {"connector": "CN9", "pin": 4, "label": "D3"}], "AGND": [{"connector": "CN10", "pin": 32, "label": "AGND"}], "PA10": [{"connector": "CN10", "pin": 33, "label": "PA10"}, {"connector": "CN9", "pin": 3, "label": "D2"}], "PC4": [{"connector": "CN10", "pin": 34, "label": "PC4"}], "PA2": [{"connector": "CN10", "pin": 35, "label": "PA2"}, {"connector": "CN9", "pin": 2, "label": "D1"}], "PA3": [{"connector": "CN10", "pin": 37, "label": "PA3"}, {"connector": "CN9", "pin": 1, "label": "D0"}]}};
+let project={cfg:{},name:"",mcu:"",board:"",raw:""},selected=null,filter="all",view="physical",wiringMode=false,findFreeMode=false,findFreeCandidates=new Set();
+
+const boardWarnings={
+ PA13:"PA13 / SWDIO is used by ST-LINK for debugging. You can reuse it only if you intentionally give up normal SWD access or isolate the ST-LINK connection.",
+ PA14:"PA14 / SWCLK is used by ST-LINK for debugging. Reusing it can prevent normal programming/debugging unless the ST-LINK connection is isolated.",
+ PA5:"PA5 / D13 is also connected to onboard green LED LD2. You can still use PA5, but LD2 may light when the pin is driven high.",
+ PC13:"PC13 is connected to the onboard blue user button B1. External circuitry on PC13 can interact with the button circuit.",
+ PA2:"PA2 / D1 may be connected to the ST-LINK Virtual COM Port as USART2_TX. If you use it for another function, check the board solder-bridge configuration.",
+ PA3:"PA3 / D0 may be connected to the ST-LINK Virtual COM Port as USART2_RX. If you use it for another function, check the board solder-bridge configuration.",
+ PC14:"PC14 is used by LSE OSC32_IN when the 32.768 kHz oscillator is enabled.",
+ PC15:"PC15 is used by LSE OSC32_OUT when the 32.768 kHz oscillator is enabled.",
+ PC1:"CN7 pin 36 can be PC1 or PB9 depending on solder-bridge configuration on supported MB1136 boards.",
+ PC0:"CN7 pin 38 can be PC0 or PB8 depending on solder-bridge configuration on supported MB1136 boards."
+};
+
+
+const PIN_CAPS={
+ PA0:["gpio","adc","pwm"],PA1:["gpio","adc","pwm"],PA2:["gpio","adc","uart","pwm"],PA3:["gpio","adc","uart","pwm"],
+ PA4:["gpio","adc","spi"],PA5:["gpio","adc","spi","pwm"],PA6:["gpio","adc","spi","pwm"],PA7:["gpio","adc","spi","pwm"],
+ PA8:["gpio","pwm","uart"],PA9:["gpio","uart","pwm"],PA10:["gpio","uart","pwm"],PA11:["gpio","uart"],PA12:["gpio","uart"],
+ PA13:["gpio"],PA14:["gpio"],PA15:["gpio","spi","pwm"],
+ PB0:["gpio","adc","pwm"],PB1:["gpio","adc","pwm"],PB2:["gpio"],PB3:["gpio","spi","pwm"],PB4:["gpio","spi","pwm"],
+ PB5:["gpio","spi","i2c","pwm"],PB6:["gpio","i2c","uart","pwm"],PB7:["gpio","i2c","uart","pwm"],PB8:["gpio","i2c","pwm"],
+ PB9:["gpio","i2c","pwm"],PB10:["gpio","i2c","uart","pwm"],PB12:["gpio","spi"],PB13:["gpio","spi"],PB14:["gpio","spi"],PB15:["gpio","spi"],
+ PC0:["gpio","adc"],PC1:["gpio","adc"],PC2:["gpio","adc","spi"],PC3:["gpio","adc","spi"],PC4:["gpio","adc"],PC5:["gpio","adc"],
+ PC6:["gpio","uart","pwm"],PC7:["gpio","uart","pwm"],PC8:["gpio","pwm"],PC9:["gpio","i2c","pwm"],PC10:["gpio","spi","uart"],
+ PC11:["gpio","spi","uart"],PC12:["gpio","spi"],PC13:["gpio"],PD2:["gpio"]
+};
+
+function parseIOC(text){
+ const cfg={};let name="",mcu="",board="";
+ const errors=[];
+ text.split(/\r?\n/).forEach(line=>{
+  if(!line.includes("="))return;
+  const i=line.indexOf("="),k=line.slice(0,i),v=line.slice(i+1).trim();
+  if(k==="ProjectManager.ProjectName")name=v;
+  if(k==="Mcu.CPN")mcu=v;
+  if(k==="Mcu.Name"&&!mcu)mcu=v;
+  if(k==="board")board=v;
+  const m=k.match(/^(P[A-H]\d+)(?:-[^.]+)?\.(GPIO_Label|Signal|Mode|Locked|GPIO_PuPd|GPIO_ModeDefaultEXTI|GPIO_Speed|GPIOParameters)$/);
+  if(m){cfg[m[1]]??={};cfg[m[1]][m[2]]=v}
+ });
+ if(!Object.keys(cfg).length)errors.push("No MCU pin configuration records were found.");
+ return {cfg,name:name||"Unnamed project",mcu:mcu||"Unknown MCU",board,raw:text,errors};
+}
+function compatible(mcu){
+ const u=(mcu||"").toUpperCase();
+ if(u.includes("STM32F401RE")||u.includes("STM32F411RE"))return "supported";
+ if(u.includes("F401RE")||u.includes("F411RE"))return "supported";
+ if(u==="UNKNOWN MCU")return "unknown";
+ return "other";
+}
+function sigClass(s){
+ s=(s||"").toUpperCase();
+ if(!s)return "";
+ if(s.includes("GPIO_OUTPUT"))return "signal-output";
+ if(s.includes("GPIO_INPUT")||s.includes("EXTI")||s.includes("GPXTI"))return "signal-input";
+ if(s.includes("SPI"))return "signal-spi"; if(s.includes("I2C"))return "signal-i2c";
+ if(s.includes("USART")||s.includes("UART"))return "signal-uart"; if(s.includes("ADC"))return "signal-adc";
+ if(s.includes("TIM"))return "signal-timer"; if(s.includes("SWD")||s.includes("JT"))return "signal-debug";
+ if(s.includes("RCC")||s.includes("OSC")||s.includes("MCO"))return "signal-clock"; return "used";
+}
+function isSpecial(p){return ["NC","GND","AGND","VDD","AVDD","E5V","U5V","+3V3","+5V","VIN","VBAT","IOREF","RESET","BOOT0"].includes(p)}
+function pinButton(pin,n,conn,isA,label){
+ const b=document.createElement("button");b.className=isA?"apin":"mpin";if(isSpecial(pin))b.classList.add("special");
+ b.textContent=n;b.dataset.pin=pin;b.dataset.conn=conn;b.dataset.label=label||pin;
+ b.onclick=()=>inspect(pin,conn,n,label||pin);
+ b.addEventListener("mousemove",e=>showPinTooltip(e,pin,conn,n,label||pin));
+ b.addEventListener("mouseleave",hidePinTooltip);
+ return b;
+}
+function renderMorph(target,arr){
+ const root=document.getElementById(target);root.innerHTML="";
+ for(let i=0;i<arr.length;i+=2){
+  let [n1,p1]=arr[i],[n2,p2]=arr[i+1],r=document.createElement("div");r.className="mrow";
+  let l=document.createElement("div");l.className="mname left";l.dataset.pinlabel=p1;l.textContent=p1;
+  let rr=document.createElement("div");rr.className="mname right";rr.dataset.pinlabel=p2;rr.textContent=p2;
+
+  const b1=pinButton(p1,n1,target.toUpperCase(),false,p1);
+  const b2=pinButton(p2,n2,target.toUpperCase(),false,p2);
+
+  const pl1=document.createElement("div");
+  pl1.className="project-label-left";pl1.dataset.projectFor=p1;
+  const pl2=document.createElement("div");
+  pl2.className="project-label-right";pl2.dataset.projectFor=p2;
+
+  b1.appendChild(pl1); b2.appendChild(pl2);
+  r.append(l,b1,b2,rr);root.append(r);
+ }
+}
+function renderArduino(target,rows,side){
+ const root=document.getElementById(target);root.innerHTML="";
+ rows.forEach(([n,label,pin])=>{
+  let r=document.createElement("div");r.className="atrace-row";
+  let l=document.createElement("div");l.className="alabel";l.textContent=label;
+  let tr=document.createElement("div");tr.className="trace";
+  let m=document.createElement("div");m.className="amcu";m.dataset.pinlabel=pin;m.textContent=pin;
+  const b=pinButton(pin,n,target.toUpperCase(),true,label);
+
+  const pl=document.createElement("div");
+  pl.dataset.projectFor=pin;
+  pl.className = side==="left" ? "project-label-right" : "project-label-left";
+  b.appendChild(pl);
+
+  r.append(l,b,tr,m);
+  root.append(r);
+ });
+}
+
+const REAL_BOARD_HOTSPOTS=[{"pin":"PC10","connector":"CN7","number":1,"label":"PC10","x":10.1554,"y":40.4594,"kind":"Morpho"},{"pin":"PC11","connector":"CN7","number":2,"label":"PC11","x":13.1016,"y":40.4594,"kind":"Morpho"},{"pin":"PC12","connector":"CN7","number":3,"label":"PC12","x":10.1554,"y":43.3829,"kind":"Morpho"},{"pin":"PD2","connector":"CN7","number":4,"label":"PD2","x":13.1016,"y":43.3829,"kind":"Morpho"},{"pin":"VDD","connector":"CN7","number":5,"label":"VDD","x":10.1554,"y":46.3064,"kind":"Morpho"},{"pin":"E5V","connector":"CN7","number":6,"label":"E5V","x":13.1016,"y":46.3064,"kind":"Morpho"},{"pin":"BOOT0","connector":"CN7","number":7,"label":"BOOT0","x":10.1554,"y":49.2298,"kind":"Morpho"},{"pin":"GND","connector":"CN7","number":8,"label":"GND","x":13.1016,"y":49.2298,"kind":"Morpho"},{"pin":"NC","connector":"CN7","number":9,"label":"NC","x":10.1554,"y":52.1533,"kind":"Morpho"},{"pin":"NC","connector":"CN7","number":10,"label":"NC","x":13.1016,"y":52.1533,"kind":"Morpho"},{"pin":"NC","connector":"CN7","number":11,"label":"NC","x":10.1554,"y":55.0767,"kind":"Morpho"},{"pin":"IOREF","connector":"CN7","number":12,"label":"IOREF","x":13.1016,"y":55.0767,"kind":"Morpho"},{"pin":"PA13","connector":"CN7","number":13,"label":"PA13","x":10.1554,"y":58.0002,"kind":"Morpho"},{"pin":"RESET","connector":"CN7","number":14,"label":"RESET","x":13.1016,"y":58.0002,"kind":"Morpho"},{"pin":"PA14","connector":"CN7","number":15,"label":"PA14","x":10.1554,"y":60.9236,"kind":"Morpho"},{"pin":"+3V3","connector":"CN7","number":16,"label":"+3V3","x":13.1016,"y":60.9236,"kind":"Morpho"},{"pin":"PA15","connector":"CN7","number":17,"label":"PA15","x":10.1554,"y":63.8471,"kind":"Morpho"},{"pin":"+5V","connector":"CN7","number":18,"label":"+5V","x":13.1016,"y":63.8471,"kind":"Morpho"},{"pin":"GND","connector":"CN7","number":19,"label":"GND","x":10.1554,"y":66.7705,"kind":"Morpho"},{"pin":"GND","connector":"CN7","number":20,"label":"GND","x":13.1016,"y":66.7705,"kind":"Morpho"},{"pin":"PB7","connector":"CN7","number":21,"label":"PB7","x":10.1554,"y":69.694,"kind":"Morpho"},{"pin":"GND","connector":"CN7","number":22,"label":"GND","x":13.1016,"y":69.694,"kind":"Morpho"},{"pin":"PC13","connector":"CN7","number":23,"label":"PC13","x":10.1554,"y":72.6174,"kind":"Morpho"},{"pin":"VIN","connector":"CN7","number":24,"label":"VIN","x":13.1016,"y":72.6174,"kind":"Morpho"},{"pin":"PC14","connector":"CN7","number":25,"label":"PC14","x":10.1554,"y":75.5409,"kind":"Morpho"},{"pin":"NC","connector":"CN7","number":26,"label":"NC","x":13.1016,"y":75.5409,"kind":"Morpho"},{"pin":"PC15","connector":"CN7","number":27,"label":"PC15","x":10.1554,"y":78.4643,"kind":"Morpho"},{"pin":"PA0","connector":"CN7","number":28,"label":"PA0","x":13.1016,"y":78.4643,"kind":"Morpho"},{"pin":"PH0","connector":"CN7","number":29,"label":"PH0","x":10.1554,"y":81.3878,"kind":"Morpho"},{"pin":"PA1","connector":"CN7","number":30,"label":"PA1","x":13.1016,"y":81.3878,"kind":"Morpho"},{"pin":"PH1","connector":"CN7","number":31,"label":"PH1","x":10.1554,"y":84.3112,"kind":"Morpho"},{"pin":"PA4","connector":"CN7","number":32,"label":"PA4","x":13.1016,"y":84.3112,"kind":"Morpho"},{"pin":"VBAT","connector":"CN7","number":33,"label":"VBAT","x":10.1554,"y":87.2347,"kind":"Morpho"},{"pin":"PB0","connector":"CN7","number":34,"label":"PB0","x":13.1016,"y":87.2347,"kind":"Morpho"},{"pin":"PC2","connector":"CN7","number":35,"label":"PC2","x":10.1554,"y":90.1581,"kind":"Morpho"},{"pin":"PC1","connector":"CN7","number":36,"label":"PC1","x":13.1016,"y":90.1581,"kind":"Morpho"},{"pin":"PC3","connector":"CN7","number":37,"label":"PC3","x":10.1554,"y":93.0816,"kind":"Morpho"},{"pin":"PC0","connector":"CN7","number":38,"label":"PC0","x":13.1016,"y":93.0816,"kind":"Morpho"},{"pin":"PC9","connector":"CN10","number":1,"label":"PC9","x":83.7055,"y":40.4094,"kind":"Morpho"},{"pin":"PC8","connector":"CN10","number":2,"label":"PC8","x":86.6517,"y":40.4094,"kind":"Morpho"},{"pin":"PB8","connector":"CN10","number":3,"label":"PB8","x":83.7055,"y":43.3329,"kind":"Morpho"},{"pin":"PC6","connector":"CN10","number":4,"label":"PC6","x":86.6517,"y":43.3329,"kind":"Morpho"},{"pin":"PB9","connector":"CN10","number":5,"label":"PB9","x":83.7055,"y":46.2564,"kind":"Morpho"},{"pin":"PC5","connector":"CN10","number":6,"label":"PC5","x":86.6517,"y":46.2564,"kind":"Morpho"},{"pin":"AVDD","connector":"CN10","number":7,"label":"AVDD","x":83.7055,"y":49.1798,"kind":"Morpho"},{"pin":"U5V","connector":"CN10","number":8,"label":"U5V","x":86.6517,"y":49.1798,"kind":"Morpho"},{"pin":"GND","connector":"CN10","number":9,"label":"GND","x":83.7055,"y":52.1033,"kind":"Morpho"},{"pin":"NC","connector":"CN10","number":10,"label":"NC","x":86.6517,"y":52.1033,"kind":"Morpho"},{"pin":"PA5","connector":"CN10","number":11,"label":"PA5","x":83.7055,"y":55.0267,"kind":"Morpho"},{"pin":"PA12","connector":"CN10","number":12,"label":"PA12","x":86.6517,"y":55.0267,"kind":"Morpho"},{"pin":"PA6","connector":"CN10","number":13,"label":"PA6","x":83.7055,"y":57.9502,"kind":"Morpho"},{"pin":"PA11","connector":"CN10","number":14,"label":"PA11","x":86.6517,"y":57.9502,"kind":"Morpho"},{"pin":"PA7","connector":"CN10","number":15,"label":"PA7","x":83.7055,"y":60.8736,"kind":"Morpho"},{"pin":"PB12","connector":"CN10","number":16,"label":"PB12","x":86.6517,"y":60.8736,"kind":"Morpho"},{"pin":"PB6","connector":"CN10","number":17,"label":"PB6","x":83.7055,"y":63.7971,"kind":"Morpho"},{"pin":"NC","connector":"CN10","number":18,"label":"NC","x":86.6517,"y":63.7971,"kind":"Morpho"},{"pin":"PC7","connector":"CN10","number":19,"label":"PC7","x":83.7055,"y":66.7205,"kind":"Morpho"},{"pin":"GND","connector":"CN10","number":20,"label":"GND","x":86.6517,"y":66.7205,"kind":"Morpho"},{"pin":"PA9","connector":"CN10","number":21,"label":"PA9","x":83.7055,"y":69.644,"kind":"Morpho"},{"pin":"PB2","connector":"CN10","number":22,"label":"PB2","x":86.6517,"y":69.644,"kind":"Morpho"},{"pin":"PA8","connector":"CN10","number":23,"label":"PA8","x":83.7055,"y":72.5674,"kind":"Morpho"},{"pin":"PB1","connector":"CN10","number":24,"label":"PB1","x":86.6517,"y":72.5674,"kind":"Morpho"},{"pin":"PB10","connector":"CN10","number":25,"label":"PB10","x":83.7055,"y":75.4909,"kind":"Morpho"},{"pin":"PB15","connector":"CN10","number":26,"label":"PB15","x":86.6517,"y":75.4909,"kind":"Morpho"},{"pin":"PB4","connector":"CN10","number":27,"label":"PB4","x":83.7055,"y":78.4143,"kind":"Morpho"},{"pin":"PB14","connector":"CN10","number":28,"label":"PB14","x":86.6517,"y":78.4143,"kind":"Morpho"},{"pin":"PB5","connector":"CN10","number":29,"label":"PB5","x":83.7055,"y":81.3378,"kind":"Morpho"},{"pin":"PB13","connector":"CN10","number":30,"label":"PB13","x":86.6517,"y":81.3378,"kind":"Morpho"},{"pin":"PB3","connector":"CN10","number":31,"label":"PB3","x":83.7055,"y":84.2612,"kind":"Morpho"},{"pin":"AGND","connector":"CN10","number":32,"label":"AGND","x":86.6517,"y":84.2612,"kind":"Morpho"},{"pin":"PA10","connector":"CN10","number":33,"label":"PA10","x":83.7055,"y":87.1847,"kind":"Morpho"},{"pin":"PC4","connector":"CN10","number":34,"label":"PC4","x":86.6517,"y":87.1847,"kind":"Morpho"},{"pin":"PA2","connector":"CN10","number":35,"label":"PA2","x":83.7055,"y":90.1081,"kind":"Morpho"},{"pin":"NC","connector":"CN10","number":36,"label":"NC","x":86.6517,"y":90.1081,"kind":"Morpho"},{"pin":"PA3","connector":"CN10","number":37,"label":"PA3","x":83.7055,"y":93.0316,"kind":"Morpho"},{"pin":"NC","connector":"CN10","number":38,"label":"NC","x":86.6517,"y":93.0316,"kind":"Morpho"},{"pin":"NC","connector":"CN6","number":1,"label":"NC","x":19.0607,"y":52.0059,"kind":"Arduino"},{"pin":"IOREF","connector":"CN6","number":2,"label":"IOREF","x":19.0607,"y":54.9375,"kind":"Arduino"},{"pin":"RESET","connector":"CN6","number":3,"label":"RESET","x":19.0607,"y":57.8691,"kind":"Arduino"},{"pin":"+3V3","connector":"CN6","number":4,"label":"+3V3","x":19.0607,"y":60.8007,"kind":"Arduino"},{"pin":"+5V","connector":"CN6","number":5,"label":"+5V","x":19.0607,"y":63.7322,"kind":"Arduino"},{"pin":"GND","connector":"CN6","number":6,"label":"GND","x":19.0607,"y":66.6638,"kind":"Arduino"},{"pin":"GND","connector":"CN6","number":7,"label":"GND","x":19.0607,"y":69.5954,"kind":"Arduino"},{"pin":"VIN","connector":"CN6","number":8,"label":"VIN","x":19.0607,"y":72.527,"kind":"Arduino"},{"pin":"PA0","connector":"CN8","number":1,"label":"A0","x":19.5607,"y":78.566,"kind":"Arduino"},{"pin":"PA1","connector":"CN8","number":2,"label":"A1","x":19.5607,"y":81.4976,"kind":"Arduino"},{"pin":"PA4","connector":"CN8","number":3,"label":"A2","x":19.5607,"y":84.4292,"kind":"Arduino"},{"pin":"PB0","connector":"CN8","number":4,"label":"A3","x":19.5607,"y":87.3607,"kind":"Arduino"},{"pin":"PC1","connector":"CN8","number":5,"label":"A4","x":19.5607,"y":90.2923,"kind":"Arduino"},{"pin":"PC0","connector":"CN8","number":6,"label":"A5","x":19.5607,"y":93.2239,"kind":"Arduino"},{"pin":"PB8","connector":"CN5","number":10,"label":"D15 / SCL","x":77.7197,"y":41.0067,"kind":"Arduino"},{"pin":"PB9","connector":"CN5","number":9,"label":"D14 / SDA","x":77.7197,"y":43.9383,"kind":"Arduino"},{"pin":"AVDD","connector":"CN5","number":8,"label":"AVDD","x":77.7197,"y":46.8699,"kind":"Arduino"},{"pin":"GND","connector":"CN5","number":7,"label":"GND","x":77.7197,"y":49.8015,"kind":"Arduino"},{"pin":"PA5","connector":"CN5","number":6,"label":"D13 / SCK","x":77.7197,"y":52.7331,"kind":"Arduino"},{"pin":"PA6","connector":"CN5","number":5,"label":"D12 / MISO","x":77.7197,"y":55.6647,"kind":"Arduino"},{"pin":"PA7","connector":"CN5","number":4,"label":"D11 / MOSI","x":77.7197,"y":58.5963,"kind":"Arduino"},{"pin":"PB6","connector":"CN5","number":3,"label":"D10 / CS","x":77.7197,"y":61.5279,"kind":"Arduino"},{"pin":"PC7","connector":"CN5","number":2,"label":"D9","x":77.7197,"y":64.4594,"kind":"Arduino"},{"pin":"PA9","connector":"CN5","number":1,"label":"D8","x":77.7197,"y":67.391,"kind":"Arduino"},{"pin":"PA8","connector":"CN9","number":8,"label":"D7","x":77.6697,"y":72.1627,"kind":"Arduino"},{"pin":"PB10","connector":"CN9","number":7,"label":"D6 / PWM","x":77.6697,"y":75.0943,"kind":"Arduino"},{"pin":"PB4","connector":"CN9","number":6,"label":"D5 / PWM","x":77.6697,"y":78.0259,"kind":"Arduino"},{"pin":"PB5","connector":"CN9","number":5,"label":"D4","x":77.6697,"y":80.9575,"kind":"Arduino"},{"pin":"PB3","connector":"CN9","number":4,"label":"D3 / PWM","x":77.6697,"y":83.8891,"kind":"Arduino"},{"pin":"PA10","connector":"CN9","number":3,"label":"D2","x":77.6697,"y":86.8207,"kind":"Arduino"},{"pin":"PA2","connector":"CN9","number":2,"label":"D1 / TX","x":77.6697,"y":89.7523,"kind":"Arduino"},{"pin":"PA3","connector":"CN9","number":1,"label":"D0 / RX","x":77.6697,"y":92.6839,"kind":"Arduino"}];
+let displayMode="classic";
+let realBoardSelectedPin="";
+
+function realBoardSignalClass(signal=""){
+ const s=String(signal).toUpperCase();
+ if(s.includes("I2C"))return "rb-i2c";
+ if(s.includes("SPI"))return "rb-spi";
+ if(s.includes("USART")||s.includes("UART"))return "rb-uart";
+ if(s.includes("ADC"))return "rb-adc";
+ if(s.includes("TIM"))return "rb-timer";
+ if(s.includes("GPIO"))return "rb-gpio";
+ return "rb-used";
+}
+
+function realBoardLocations(pin){
+ return REAL_BOARD_HOTSPOTS
+   .filter(h=>h.pin===pin)
+   .map(h=>`${h.connector}-${h.number} · ${h.label}`);
+}
+
+function updateRealBoardHud(pin){
+ const cfg=project.cfg[pin]||{};
+ const title=document.getElementById("realBoardHudTitle");
+ const sub=document.getElementById("realBoardHudSub");
+ if(!title||!sub)return;
+
+ title.textContent=pin||"Select a socket";
+ sub.textContent=cfg.Signal ? "Configured in active IOC" : "Physical board pin";
+ document.getElementById("realBoardHudPin").textContent=pin||"—";
+ document.getElementById("realBoardHudSignal").textContent=cfg.Signal||"—";
+ document.getElementById("realBoardHudLabel").textContent=cfg.GPIO_Label||"—";
+ document.getElementById("realBoardHudLocations").textContent=pin ? realBoardLocations(pin).join(" · ") : "—";
+}
+
+function selectRealBoardPin(pin,sourceHotspot=null){
+ realBoardSelectedPin=pin;
+ document.querySelectorAll(".rb-hotspot").forEach(el=>el.classList.toggle("selected",el.dataset.pin===pin));
+ updateRealBoardHud(pin);
+
+ if(sourceHotspot){
+   inspect(pin,sourceHotspot.dataset.connector,sourceHotspot.dataset.number,sourceHotspot.dataset.label||pin);
+ } else {
+   const loc=REAL_BOARD_HOTSPOTS.find(h=>h.pin===pin);
+   if(loc)inspect(pin,loc.connector,loc.number,loc.label||pin);
+ }
+}
+
+function renderRealBoardHotspots(){
+ const root=document.getElementById("realBoardHotspots");
+ if(!root)return;
+ root.innerHTML="";
+
+ REAL_BOARD_HOTSPOTS.forEach(h=>{
+   const b=document.createElement("button");
+   b.type="button";
+   b.className="rb-hotspot";
+   b.dataset.pin=h.pin;
+   b.dataset.connector=h.connector;
+   b.dataset.number=h.number;
+   b.dataset.label=h.label;
+   b.style.left=h.x+"%";
+   b.style.top=h.y+"%";
+   b.title=`${h.pin} · ${h.connector}-${h.number} · ${h.label}`;
+
+   b.addEventListener("mouseenter",()=>{
+     b.classList.add("hovered");
+     document.querySelectorAll(`.rb-hotspot[data-pin="${h.pin}"]`).forEach(x=>x.classList.add("peer-hover"));
+     updateRealBoardHud(h.pin);
+   });
+   b.addEventListener("mouseleave",()=>{
+     b.classList.remove("hovered");
+     document.querySelectorAll(".rb-hotspot.peer-hover").forEach(x=>x.classList.remove("peer-hover"));
+     if(realBoardSelectedPin)updateRealBoardHud(realBoardSelectedPin);
+     else updateRealBoardHud("");
+   });
+   b.addEventListener("click",()=>selectRealBoardPin(h.pin,b));
+   root.appendChild(b);
+ });
+
+ updateRealBoardState();
+}
+
+function updateRealBoardState(){
+  const board=document.getElementById("board");
+  if(!board)return;
+
+  const q=(document.getElementById("search")?.value||"").trim().toUpperCase();
+  const realView=view||"physical";
+  const realFilter=filter||"all";
+
+  board.classList.toggle("projectmode",realView==="project");
+  board.dataset.activeFilter=realFilter;
+
+  function dotColor(signal, configured, freePin){
+    if(freePin)return "#64748b";
+    if(!configured)return "#64748b";
+    const s=String(signal||"").toUpperCase();
+    if(s.includes("I2C"))return "#a855f7";
+    if(s.includes("SPI"))return "#f59e0b";
+    if(s.includes("USART")||s.includes("UART"))return "#eab308";
+    if(s.includes("ADC"))return "#06b6d4";
+    if(s.includes("TIM"))return "#ec4899";
+    if(s.includes("GPIO")||s.includes("EXTI"))return "#22c55e";
+    return "#22c55e";
+  }
+
+  document.querySelectorAll(".rb-hotspot").forEach(el=>{
+    const pin=el.dataset.pin;
+    const cfg=project.cfg?.[pin]||{};
+    const signal=String(cfg.Signal||"");
+    const configured=!!signal;
+    const isMcu=/^P[A-H]\d+$/.test(pin);
+    const freePin=isMcu&&!configured;
+
+    const aliases=(P.aliases?.[pin]||[]).join(" ");
+    const hay=[
+      pin,
+      aliases,
+      cfg.GPIO_Label||"",
+      signal,
+      el.dataset.connector||"",
+      el.dataset.number||"",
+      el.dataset.label||""
+    ].join(" ").toUpperCase();
+
+    const searchOk=!q||hay.includes(q);
+
+    let filterOk=false;
+    switch(realFilter){
+      case "all":
+        filterOk = realView==="project" ? configured : isMcu;
+        break;
+      case "used":
+        filterOk = configured;
+        break;
+      case "free":
+        filterOk = freePin;
+        break;
+      case "gpio":
+        filterOk = configured && (/GPIO/.test(signal) || /EXTI/.test(signal));
+        break;
+      case "comm":
+        filterOk = configured && /(SPI|I2C|USART|UART)/.test(signal);
+        break;
+      case "analog":
+        filterOk = configured && /ADC/.test(signal);
+        break;
+      default:
+        filterOk = realView==="project" ? configured : isMcu;
+    }
+
+    let visible=searchOk&&filterOk;
+    let color=dotColor(signal,configured,freePin);
+    const freeMatch=findFreeMode&&findFreeCandidates.has(pin);
+
+    // Find Free takes priority over normal Real Board filters, matching Classic behavior.
+    if(findFreeMode){
+      visible=freeMatch;
+      if(freeMatch)color="#84cc16";
+    }
+
+    // DIRECT rendering: do not depend on legacy opacity / ::after CSS.
+    el.style.setProperty("opacity", visible ? "1" : "0", "important");
+    el.style.setProperty("background", visible ? color : "transparent", "important");
+    el.style.setProperty("border-color", freeMatch ? "#bef264" : (q&&visible ? "#22d3ee" : "transparent"), "important");
+    el.style.setProperty("box-shadow", freeMatch ? "0 0 0 2px rgba(132,204,22,.24),0 0 13px rgba(132,204,22,.88)" : (q&&visible ? "0 0 0 2px rgba(34,211,238,.22)" : "none"), "important");
+
+    el.dataset.visible=visible?"1":"0";
+    el.classList.toggle("configured",configured);
+    el.classList.toggle("free",freePin);
+    el.classList.toggle("rb-search-match",!!q&&visible);
+  });
+
+  // Selected pin always remains visible at all physical locations.
+  document.querySelectorAll(".rb-hotspot").forEach(el=>{
+    const selected=!!realBoardSelectedPin && el.dataset.pin===realBoardSelectedPin;
+    el.classList.toggle("selected",selected);
+    if(selected){
+      el.style.setProperty("opacity","1","important");
+      el.style.setProperty("border-color","#facc15","important");
+      el.style.setProperty("box-shadow","0 0 0 2px rgba(250,204,21,.22)","important");
+    }
+  });
+}
+
+function setDisplayMode(mode){
+ displayMode=mode==="real" ? "real" : "classic";
+ const board=document.getElementById("board");
+ const text=document.getElementById("displayModeToggleText");
+ if(!board||!text)return;
+
+ board.dataset.displayMode=displayMode;
+ text.textContent=displayMode==="real" ? "Classic Pinout" : "Real Board";
+
+ try{localStorage.setItem("nucleopin-display-mode",displayMode)}catch{}
+}
+
+function initDisplayMode(){
+ let saved="classic";
+ try{saved=localStorage.getItem("nucleopin-display-mode")||"classic"}catch{}
+ setDisplayMode(saved);
+
+ const btn=document.getElementById("displayModeToggle");
+ if(btn){
+   btn.addEventListener("click",()=>setDisplayMode(displayMode==="real"?"classic":"real"));
+ }
+}
+
+function renderBoard(){
+ renderMorph("cn7",P.cn7);renderMorph("cn10",P.cn10);
+ renderArduino("cn6",P.arduino.CN6,"left");renderArduino("cn8",P.arduino.CN8,"left");
+ renderArduino("cn5",P.arduino.CN5,"right");renderArduino("cn9",P.arduino.CN9,"right");
+ renderRealBoardHotspots();
+ refresh();
+}
+
+function syncToolbarActiveState(){
+  document.querySelectorAll(".viewbtn").forEach(b=>{
+    b.classList.toggle("active",b.dataset.view===view);
+  });
+
+  document.querySelectorAll(".filterbtn,.filter").forEach(b=>{
+    b.classList.toggle("active",b.dataset.filter===filter);
+  });
+}
+
+function refresh(){
+ syncToolbarActiveState();
+ document.querySelectorAll(".mpin,.apin").forEach(el=>{
+  const p=el.dataset.pin,c=project.cfg[p]||{},s=c.Signal||"";
+  el.classList.remove("signal-input","signal-output","signal-spi","signal-i2c","signal-uart","signal-adc","signal-timer","signal-debug","signal-clock","used","selected","unconfigured");
+  if(s)el.classList.add(sigClass(s)); else el.classList.add("unconfigured");
+  if(selected===p)el.classList.add("selected"); if(wiringMode&&selected===p)el.classList.add("wiring-match"); else if(!wiringMode)el.classList.remove("wiring-match");
+  let q=document.getElementById("search").value.trim().toUpperCase();
+  let hay=(p+" "+(P.aliases[p]||[]).join(" ")+" "+(c.GPIO_Label||"")+" "+s+" "+el.dataset.conn+"-"+el.textContent).toUpperCase();
+  let visible=!q||hay.includes(q);
+  if(filter==="used")visible=visible&&!!s;
+  if(filter==="free")visible=visible&&!s&&/^P[A-H]\d+$/.test(p);
+  if(filter==="gpio")visible=visible&&(s.includes("GPIO")||s.includes("EXTI"));
+  if(filter==="comm")visible=visible&&/(SPI|I2C|USART|UART)/.test(s);
+  if(filter==="analog")visible=visible&&s.includes("ADC");
+  el.classList.toggle("filter-hidden",!visible);
+  el.classList.toggle("filter-visible",visible);
+  el.style.opacity=visible?"1":".10";
+ });
+ document.getElementById("board").classList.toggle("projectmode",view==="project");
+ document.getElementById("board").dataset.activeFilter=filter;
+ updateRealBoardState();
+
+ document.querySelectorAll("[data-project-for]").forEach(el=>{
+   const p=el.dataset.projectFor,c=project.cfg[p]||{},txt=c.GPIO_Label||"";
+   el.textContent=txt;
+   el.title=txt;
+   el.classList.toggle("long",txt.length>14);
+   el.classList.toggle("verylong",txt.length>20);
+ });
+
+ document.querySelectorAll(".mrow,.atrace-row").forEach(r=>r.classList.remove("selected-label"));
+ if(selected){
+   document.querySelectorAll('.mpin[data-pin="'+selected+'"],.apin[data-pin="'+selected+'"]').forEach(el=>{
+     el.closest(".mrow,.atrace-row")?.classList.add("selected-label");
+   });
+ }
+ document.querySelectorAll("[data-pinlabel]").forEach(el=>{
+  const p=el.dataset.pinlabel,c=project.cfg[p]||{},base=p;
+  el.classList.toggle("configured-label",!!c.Signal);
+  el.textContent=base;
+ });
+}
+
+
+
+function inspect(pin,conn,n,label){
+ selected=pin;
+ if(wiringMode){
+   document.querySelectorAll(".mpin,.apin").forEach(el=>el.classList.toggle("wiring-match",el.dataset.pin===pin));
+ }
+ refresh();
+ const c=project.cfg[pin]||{},al=(P.aliases[pin]||[]).join(", ");
+ document.getElementById("pinTitle").textContent=pin+(al?" / "+al:"");
+ document.getElementById("pinMeta").textContent=conn+" pin "+n+(label!==pin?" · "+label:"");
+ const tags=[];if(c.GPIO_Label)tags.push(c.GPIO_Label);if(c.Signal)tags.push(c.Signal);if(c.Mode)tags.push(c.Mode);
+ document.getElementById("tags").innerHTML=tags.map(x=>'<span class="tag">'+esc(x)+'</span>').join("");
+ document.getElementById("cube").innerHTML=c.Signal?("<b>Label:</b> "+esc(c.GPIO_Label||"—")+"<br><b>Signal:</b> "+esc(c.Signal)+"<br><b>Mode:</b> "+esc(c.Mode||"—")+"<br><b>Pull:</b> "+esc(c.GPIO_PuPd||"—")+"<br><b>Speed:</b> "+esc(c.GPIO_Speed||"—")):"Not configured in the loaded IOC.";
+ let loc=P.locations[pin]||[];document.getElementById("locations").innerHTML=loc.length?loc.map(x=>'<div class="locrow"><b>'+x.connector+'</b><span>pin '+x.pin+'</span><span>'+x.label+'</span></div>').join(""):"No expansion-header location.";
+ let w=boardWarnings[pin];document.getElementById("warn").style.display=w?"block":"none";if(w)document.getElementById("warnText").textContent=w;
+ renderCode(pin,c);
+}
+function renderCode(pin,c){
+ let code="// "+pin+(c.GPIO_Label?" — "+c.GPIO_Label:"")+"\n",buttons=[];
+ if(c.Signal==="GPIO_Output"){
+  code+="HAL_GPIO_WritePin(GPIO"+pin[1]+", GPIO_PIN_"+pin.slice(2)+", GPIO_PIN_SET);\nHAL_GPIO_WritePin(GPIO"+pin[1]+", GPIO_PIN_"+pin.slice(2)+", GPIO_PIN_RESET);";
+  buttons=[["Copy SET","HAL_GPIO_WritePin(GPIO"+pin[1]+", GPIO_PIN_"+pin.slice(2)+", GPIO_PIN_SET);"],["Copy RESET","HAL_GPIO_WritePin(GPIO"+pin[1]+", GPIO_PIN_"+pin.slice(2)+", GPIO_PIN_RESET);"]];
+ }else if(c.Signal==="GPIO_Input"){
+  let t="GPIO_PinState state = HAL_GPIO_ReadPin(GPIO"+pin[1]+", GPIO_PIN_"+pin.slice(2)+");";code+=t;buttons=[["Copy READ",t]];
+ }else if(c.Signal&&/EXTI/.test(c.Signal)){code+="// EXTI is configured by CubeMX.\n// Handle it in HAL_GPIO_EXTI_Callback().";}
+ else if(c.Signal){code+="// CubeMX signal: "+c.Signal+"\n// Peripheral initialization is generated by CubeMX.";}
+ else code+="// Free / not configured in this IOC.";
+ document.getElementById("code").textContent=code;
+ document.getElementById("copyrow").innerHTML="";
+ buttons.forEach(([label,text])=>{let b=document.createElement("button");b.className="copybtn";b.textContent=label;b.onclick=()=>navigator.clipboard.writeText(text);document.getElementById("copyrow").append(b)});
+}
+
+function showPinTooltip(e,pin,conn,n,label){
+ const c=project.cfg[pin]||{},tip=document.getElementById("pinTooltip");
+ const alias=(P.aliases[pin]||[]).join(", ");
+ const locs=(P.locations[pin]||[]).map(x=>x.connector+"-"+x.pin).join(", ");
+ let lines=[];
+ lines.push('<div class="hover-card-title">'+esc(pin)+(alias?" / "+esc(alias):"")+'</div>');
+ if(c.GPIO_Label)lines.push('<div class="hover-card-label">'+esc(c.GPIO_Label)+'</div>');
+ lines.push('<div class="hover-card-line">'+esc(conn)+" pin "+n+(label!==pin?" · "+esc(label):"")+'</div>');
+ if(c.Signal)lines.push('<div class="hover-card-line">'+esc(c.Signal)+'</div>');
+ if(locs)lines.push('<div class="hover-card-line">Locations: '+esc(locs)+'</div>');
+ if(boardWarnings[pin])lines.push('<div class="hover-card-line" style="color:#fde68a">⚠ '+esc(boardWarnings[pin])+'</div>');
+ tip.innerHTML=lines.join("");
+ tip.style.display="block";
+ tip.style.left=Math.min(e.clientX+14,window.innerWidth-320)+"px";
+ tip.style.top=Math.min(e.clientY+14,window.innerHeight-180)+"px";
+}
+function hidePinTooltip(){document.getElementById("pinTooltip").style.display="none"}
+
+
+
+function findFreePins(){
+ const type=document.getElementById("freeType").value;
+ if(!type){
+  document.getElementById("freeStatus").textContent="Choose a function first.";
+  return;
+ }
+ if(!project.raw){
+  document.getElementById("freeStatus").textContent="Load an IOC first.";
+  return;
+ }
+
+ const used=new Set(Object.entries(project.cfg).filter(([,c])=>c.Signal).map(([p])=>p));
+ const candidates=Object.entries(PIN_CAPS)
+   .filter(([p,caps])=>caps.includes(type)&&!used.has(p)&&(P.locations[p]||[]).length)
+   .map(([p])=>p);
+
+ findFreeMode=true;
+ findFreeCandidates=new Set(candidates);
+ setWiringMode(false);
+ document.getElementById("board").classList.add("findfree-active");
+
+ // Classic Pinout
+ document.querySelectorAll(".mpin,.apin").forEach(el=>{
+   el.classList.toggle("free-match",findFreeCandidates.has(el.dataset.pin));
+ });
+
+ // Real Board uses the same candidate set.
+ updateRealBoardState();
+
+ document.getElementById("findFreeBtn").textContent="Clear";
+ document.getElementById("freeStatus").textContent=candidates.length
+   ? candidates.length+" suitable unused MCU pins highlighted."
+   : "No unused mapped pins found for this function.";
+}
+
+function clearFreePins(){
+ findFreeMode=false;
+ findFreeCandidates=new Set();
+ document.getElementById("board").classList.remove("findfree-active");
+ document.querySelectorAll(".free-match").forEach(x=>x.classList.remove("free-match"));
+ updateRealBoardState();
+ document.getElementById("findFreeBtn").textContent="Find Free";
+ document.getElementById("freeStatus").textContent=project.raw?"Choose a function and click Find Free.":"Load an IOC first.";
+}
+
+function buildWiringList(){
+ const rows=Object.entries(project.cfg).filter(([,c])=>c.Signal&&c.GPIO_Label);
+ if(!rows.length){
+   document.getElementById("wiringListContent").innerHTML='<div class="empty-state">No labelled configured pins were found in this IOC.</div>';
+   return;
+ }
+ rows.sort((a,b)=>(a[1].GPIO_Label||a[0]).localeCompare(b[1].GPIO_Label||b[0]));
+ let h='<table class="wiring-table"><thead><tr><th>Name</th><th>MCU</th><th>Arduino</th><th>Connect at</th><th>Function</th></tr></thead><tbody>';
+ rows.forEach(([p,c])=>{
+   const ard=(P.aliases[p]||[]).join(", ")||"—";
+   const loc=(P.locations[p]||[]).map(x=>x.connector+"-"+x.pin+(x.label!==p?" ("+x.label+")":"")).join(", ")||"—";
+   h+='<tr data-pin="'+p+'"><td><b>'+esc(c.GPIO_Label)+'</b></td><td>'+p+'</td><td>'+esc(ard)+'</td><td>'+esc(loc)+'</td><td>'+esc(c.Signal)+'</td></tr>';
+ });
+ h+='</tbody></table>';
+ document.getElementById("wiringListContent").innerHTML=h;
+ document.querySelectorAll("#wiringListContent tr[data-pin]").forEach(r=>r.onclick=()=>{
+   const p=r.dataset.pin,loc=P.locations[p]?.[0];
+   hideModal("wiringModal");
+   inspect(p,loc?.connector||"",loc?.pin||"",loc?.label||p);
+ });
+}
+
+function showModal(id){document.getElementById(id).classList.add("show")}
+function hideModal(id){document.getElementById(id).classList.remove("show")}
+
+function updateStats(){
+ const cfgEntries=Object.entries(project.cfg);
+ const used=cfgEntries.filter(([,c])=>c.Signal);
+ const visibleGPIOs=[...new Set(
+   [...P.cn7,...P.cn10].map(x=>x[1]).filter(p=>/^P[A-H]\d+$/.test(p))
+ )];
+ const usedNames=new Set(used.map(([p])=>p));
+ const free=visibleGPIOs.filter(p=>!usedNames.has(p)).length;
+ const outputs=used.filter(([,c])=>(c.Signal||"").includes("GPIO_Output")).length;
+ const inputs=used.filter(([,c])=>/(GPIO_Input|EXTI|GPXTI)/.test(c.Signal||"")).length;
+ const comm=used.filter(([,c])=>/(SPI|I2C|USART|UART)/.test(c.Signal||"")).length;
+ const analog=used.filter(([,c])=>(c.Signal||"").includes("ADC")).length;
+ document.getElementById("statUsed").textContent=used.length;
+ document.getElementById("statFree").textContent=free;
+ document.getElementById("statOut").textContent=outputs;
+ document.getElementById("statIn").textContent=inputs;
+ document.getElementById("statComm").textContent=comm;
+ document.getElementById("statAnalog").textContent=analog;
+}
+
+function runProjectCheck(){
+ const issues=[];
+ let passed=0;
+ const entries=Object.entries(project.cfg).filter(([,c])=>c.Signal);
+
+ if(!project.raw){
+   document.getElementById("checkSummary").innerHTML='<span class="check-pill check-warn">No IOC loaded</span>';
+   document.getElementById("checkList").innerHTML="";
+   return;
+ }
+
+ const comp=compatible(project.mcu);
+ if(comp==="supported") passed++;
+ else if(comp==="other") issues.push({level:"bad",text:"MCU is not F401RE/F411RE; the physical header mapping may be incorrect."});
+ else issues.push({level:"warn",text:"MCU could not be positively identified from the IOC."});
+
+ if(entries.length) passed++; else issues.push({level:"warn",text:"No configured MCU pins were detected."});
+
+ const configuredPins=new Set(entries.map(([p])=>p));
+ for(const p of ["PA13","PA14"]){
+   const c=project.cfg[p];
+   if(c&&c.Signal&&!/(SWD|JT)/i.test(c.Signal)){
+     issues.push({level:"warn",text:p+" is a ST-LINK/SWD debug pin but is configured as "+c.Signal+"."});
+   } else passed++;
+ }
+
+ for(const p of ["PC14","PC15"]){
+   const c=project.cfg[p];
+   if(c&&c.Signal&&!/(RCC|OSC)/i.test(c.Signal)){
+     issues.push({level:"warn",text:p+" is associated with the LSE oscillator but is configured as "+c.Signal+"."});
+   } else passed++;
+ }
+
+ if(project.cfg.PA5?.Signal){
+   issues.push({level:"warn",text:"PA5 is configured and is also connected to onboard LED LD2."});
+ } else passed++;
+
+ if(project.cfg.PC13?.Signal){
+   issues.push({level:"warn",text:"PC13 is configured and is also connected to onboard user button B1."});
+ } else passed++;
+
+ if(project.cfg.PA2?.Signal && !/USART2_TX/i.test(project.cfg.PA2.Signal)){
+   issues.push({level:"warn",text:"PA2 may be tied to the ST-LINK VCP TX path depending on board solder bridges."});
+ } else passed++;
+
+ if(project.cfg.PA3?.Signal && !/USART2_RX/i.test(project.cfg.PA3.Signal)){
+   issues.push({level:"warn",text:"PA3 may be tied to the ST-LINK VCP RX path depending on board solder bridges."});
+ } else passed++;
+
+ // Flag configured MCU pins that are not present on this physical expansion map.
+ entries.forEach(([p,c])=>{
+   if(/^P[A-H]\d+$/.test(p) && !(P.locations[p]||[]).length){
+     issues.push({level:"warn",text:p+" ("+(c.GPIO_Label||c.Signal)+") is configured but is not mapped to a CN5/CN6/CN7/CN8/CN9/CN10 expansion pin in this tool."});
+   } else passed++;
+ });
+
+ // Duplicate GPIO labels are usually accidental.
+ const labels={};
+ entries.forEach(([p,c])=>{
+   const lab=(c.GPIO_Label||"").trim();
+   if(lab)(labels[lab]??=[]).push(p);
+ });
+ Object.entries(labels).forEach(([lab,pins])=>{
+   if(pins.length>1)issues.push({level:"warn",text:'GPIO label "'+lab+'" is used on multiple pins: '+pins.join(", ")+'.'});
+   else passed++;
+ });
+
+ const bad=issues.filter(x=>x.level==="bad").length;
+ const warns=issues.filter(x=>x.level==="warn").length;
+ document.getElementById("checkSummary").innerHTML=
+   '<div class="check-summary">'+
+   '<span class="check-pill check-ok">✓ '+passed+' checks passed</span>'+
+   '<span class="check-pill check-warn">⚠ '+warns+' warnings</span>'+
+   '<span class="check-pill check-bad">✕ '+bad+' errors</span>'+
+   '</div>';
+
+ document.getElementById("checkList").innerHTML=issues.length
+   ? issues.map(x=>'<div class="check-item">'+(x.level==="bad"?"✕ ":"⚠ ")+esc(x.text)+'</div>').join("")
+   : '<div class="check-item" style="color:#86efac">✓ No board-level issues detected by the current checks.</div>';
+}
+
+function setWiringMode(on){
+ if(on) clearFreePins();
+ wiringMode=on;
+ document.getElementById("wiringMode").classList.toggle("active",on);
+ document.getElementById("wiringMode").textContent=on?"Exit Wiring Mode":"Wiring Mode";
+ document.getElementById("wiringBanner").classList.toggle("show",on);
+ document.getElementById("board").classList.toggle("wiring-active",on);
+ if(!on)document.querySelectorAll(".wiring-match").forEach(x=>x.classList.remove("wiring-match"));
+ else if(selected)document.querySelectorAll(".mpin,.apin").forEach(el=>el.classList.toggle("wiring-match",el.dataset.pin===selected));
+ refresh();
+}
+
+function updateProject(){
+ const rows=Object.entries(project.cfg).filter(([,c])=>c.Signal);
+ const comp=compatible(project.mcu),box=document.getElementById("compat");
+ box.className="card "+(comp==="other"?"error":"");
+ let msg="<b>"+esc(project.name)+"</b><br>"+esc(project.mcu)+"<br>"+rows.length+" configured MCU pins";
+ if(comp==="supported")msg+="<br><span style='color:#86efac'>✓ F401RE/F411RE layout supported</span>";
+ else if(comp==="other")msg+="<br><b>This tool's physical header map is for NUCLEO-F401RE/F411RE. Pin locations may be wrong for this MCU/board.</b>";
+ else msg+="<br>MCU could not be positively identified.";
+ if(project.errors?.length)msg+="<br>"+project.errors.map(esc).join("<br>");
+ document.getElementById("projectInfo").innerHTML=msg;
+ document.getElementById("boardTitle").textContent=(project.mcu.toUpperCase().includes("F401RE")?"NUCLEO-F401RE":project.mcu.toUpperCase().includes("F411RE")?"NUCLEO-F411RE":"NUCLEO-F4xxRE");
+ renderUsed(rows);selected=null;clearFreePins();updateStats();runProjectCheck();refresh();
+}
+function renderUsed(rows){
+ if(!rows.length){document.getElementById("usedTable").textContent="No configured pins detected.";return}
+ let h='<table class="ptable"><thead><tr><th>Label</th><th>MCU</th><th>Arduino</th><th>Signal</th></tr></thead><tbody>';
+ rows.sort((a,b)=>(a[1].GPIO_Label||a[0]).localeCompare(b[1].GPIO_Label||b[0])).forEach(([p,c])=>{
+  h+='<tr data-pin="'+p+'"><td>'+esc(c.GPIO_Label||"—")+'</td><td>'+p+'</td><td>'+esc((P.aliases[p]||[]).join(", ")||"—")+'</td><td>'+esc(c.Signal)+'</td></tr>';
+ });
+ h+='</tbody></table>';document.getElementById("usedTable").innerHTML=h;
+ document.querySelectorAll("#usedTable tr[data-pin]").forEach(r=>r.onclick=()=>{let p=r.dataset.pin,loc=P.locations[p]?.[0];inspect(p,loc?.connector||"",loc?.pin||"",loc?.label||p)});
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function clearProject(){
+
+ project={cfg:{},name:"",mcu:"",board:"",raw:""};selected=null;
+ document.getElementById("compat").className="card";document.getElementById("projectInfo").textContent="Upload an .ioc file to begin.";
+ document.getElementById("usedTable").textContent="No project loaded.";
+ document.getElementById("statUsed").textContent="0";document.getElementById("statFree").textContent="0";document.getElementById("statOut").textContent="0";
+ document.getElementById("statIn").textContent="0";document.getElementById("statComm").textContent="0";document.getElementById("statAnalog").textContent="0";
+ document.getElementById("checkSummary").textContent="Load an IOC, then click Check Project.";document.getElementById("checkList").innerHTML="";document.getElementById("status").textContent="No IOC loaded";document.getElementById("boardTitle").textContent="NUCLEO-F4xxRE";
+ document.getElementById("pinTitle").textContent="Select a pin";document.getElementById("pinMeta").textContent="Click a connector pin.";document.getElementById("tags").innerHTML="";
+ document.getElementById("cube").textContent="Upload an IOC and select a pin.";document.getElementById("locations").textContent="Select a pin.";document.getElementById("code").textContent="// Select a pin.";document.getElementById("copyrow").innerHTML="";document.getElementById("warn").style.display="none";clearFreePins();setWiringMode(false);refresh();
+}
+
+// Desktop bridge: allow NucleoPin Desktop to load IOC text directly.
+window.loadIOCText = function(text, name = "project.ioc") {
+  try {
+    project = parseIOC(text);
+    updateProject();
+    const status = document.getElementById("status");
+    if (status) status.textContent = name + " loaded";
+    return true;
+  } catch (e) {
+    console.error("IOC bridge load failed:", e);
+    const box = document.getElementById("runtimeError");
+    if (box) {
+      box.style.display = "block";
+      box.textContent = "IOC load failed: " + (e?.message || e);
+    }
+    throw e;
+  }
+};
+
+async function loadFile(f){
+ if(!f)return;if(!f.name.toLowerCase().endsWith(".ioc")&&!confirm("This is not named .ioc. Try to parse it anyway?"))return;
+ try{project=parseIOC(await f.text());updateProject();document.getElementById("status").textContent=f.name+" loaded"}catch(e){alert("IOC parsing failed: "+e.message)}
+}
+document.getElementById("file").onchange=e=>loadFile(e.target.files[0]);
+document.getElementById("clear").onclick=clearProject;
+
+function buildOriginalPrintableDocument(){
+  const boardClone=document.getElementById("board").cloneNode(true);
+
+  // v0.8.0: printing is ALWAYS the Classic Pinout, regardless of the current
+  // screen display mode. The real-board photo/HUD is screen-only.
+  boardClone.dataset.displayMode="classic";
+  boardClone.querySelectorAll(".real-board-layer").forEach(el=>el.remove());
+  boardClone.classList.remove("darkboard","projectmode");
+
+  // Keep the exact same board structure/layout as the main page.
+  boardClone.querySelectorAll(".mpin,.apin").forEach(el=>{
+    el.style.opacity="1";
+    el.classList.remove("selected","unconfigured");
+    el.removeAttribute("title");
+  });
+
+  // Remove hover labels and recreate print-only labels for used pins.
+  boardClone.querySelectorAll(".project-label-left,.project-label-right").forEach(el=>el.remove());
+
+  function addPrintLabel(el,pin,side){
+    const c=project.cfg[pin]||{};
+    if(!c.Signal)return;
+
+    const label=document.createElement("span");
+    label.className="print-project-label "+(side==="left"?"print-left":"print-right");
+    label.textContent=c.GPIO_Label||c.Signal||pin;
+    el.appendChild(label);
+  }
+
+  // Morpho: odd/left pin labels go to the left, even/right pins to the right.
+  boardClone.querySelectorAll(".mrow").forEach(row=>{
+    const pins=[...row.querySelectorAll(".mpin")];
+    if(pins[0])addPrintLabel(pins[0],pins[0].dataset.pin,"left");
+    if(pins[1])addPrintLabel(pins[1],pins[1].dataset.pin,"right");
+  });
+
+  // Arduino headers: put labels toward the open centre of the board.
+  boardClone.querySelectorAll(".apin").forEach(el=>{
+    const conn=el.dataset.conn;
+    const side=(conn==="CN6"||conn==="CN8")?"right":"left";
+    addPrintLabel(el,el.dataset.pin,side);
+  });
+
+  const projectName=project.name||"NUCLEO-F4xxRE Pinout";
+  const mcuName=project.mcu||"";
+  const configured=Object.entries(project.cfg).filter(([,c])=>c.Signal);
+
+  // Reuse the REAL page stylesheet so the board cannot collapse.
+  const baseCSS=[...document.querySelectorAll("style")].map(s=>s.textContent).join("\n");
+
+  const printOverrides=`
+    @page{size:A4 landscape;margin:4mm}
+    html,body{
+      margin:0!important;
+      padding:0!important;
+      background:#fff!important;
+      color:#111!important;
+    }
+    body{overflow:visible!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    .print-page{
+      width:100%;
+      min-height:198mm;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      overflow:hidden;
+    }
+    .print-header{
+      width:100%;
+      text-align:center;
+      margin:0 0 2mm;
+      flex:0 0 auto;
+    }
+    .print-header h1{
+      margin:0 0 1px;
+      font-size:18px;
+    }
+    .print-meta{
+      font-size:10px;
+      color:#555;
+    }
+    .print-board-holder{
+      width:100%;
+      flex:1 1 auto;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:visible;
+    }
+
+    /* Preserve the main-page board proportions. */
+    .board{
+      width:100%!important;
+      max-width:1180px!important;
+      min-height:0!important;
+      overflow:visible!important;
+      padding:12px 16px 10px!important;
+      background:#dedede!important;
+      color:#000!important;
+      border-radius:8px!important;
+    }
+    .board-title{
+      margin:8px 0 20px!important;
+      font-size:23px!important;
+    }
+    .board-grid{
+      min-width:790px!important;
+      grid-template-columns:390px 1fr 390px!important;
+      gap:24px!important;
+      transform:scale(.95);
+      transform-origin:top center;
+      margin-bottom:-25px;
+      overflow:visible!important;
+    }
+    .cluster,.mrow,.atrace-row,.mpin,.apin{
+      overflow:visible!important;
+    }
+    .center{padding-top:105px!important}
+    .chip{width:96px!important;height:86px!important}
+    .legend{
+      margin-top:6px!important;
+      font-size:8.5px!important;
+    }
+
+    /* Project labels: only configured pins get one. */
+    .print-project-label{
+      position:absolute!important;
+      top:50%!important;
+      transform:translateY(-50%)!important;
+      display:block!important;
+      opacity:1!important;
+      color:#111!important;
+      background:#fff!important;
+      border:1px solid #aaa!important;
+      border-radius:3px!important;
+      padding:2px 4px!important;
+      font-size:8px!important;
+      font-weight:700!important;
+      line-height:1.15!important;
+      white-space:nowrap!important;
+      max-width:135px!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      z-index:100!important;
+      pointer-events:none!important;
+    }
+    .print-left{
+      right:100%!important;
+      left:auto!important;
+      margin-right:6px!important;
+      text-align:right!important;
+    }
+    .print-right{
+      left:100%!important;
+      right:auto!important;
+      margin-left:6px!important;
+      text-align:left!important;
+    }
+
+    /* Hide all screen-only UI if inherited. */
+    .top,.actions,.drop,.toolbar,.panel:not(.print-board-panel),.privacy,
+    .project-label-left,.project-label-right{
+      display:none!important;
+    }
+
+    .print-footer{
+      width:100%;
+      text-align:center;
+      font-size:7.5px;
+      color:#666;
+      margin-top:1mm;
+      flex:0 0 auto;
+    }
+  `;
+
+  return `<!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>${esc(projectName)} - Pinout</title>
+    <style>${baseCSS}\n${printOverrides}
+/* v9 upgrades */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+.stat{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px;
+  text-align:center;
+  background:rgba(15,23,42,.22);
+}
+.stat b{display:block;font-size:16px}
+.stat span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+
+.check-summary{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+.check-pill{
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  border:1px solid #475569;
+}
+.check-ok{background:#052e16;border-color:#166534;color:#86efac}
+.check-warn{background:#451a03;border-color:#92400e;color:#fde68a}
+.check-bad{background:#450a0a;border-color:#991b1b;color:#fecaca}
+.check-list{font-size:11px;line-height:1.55}
+.check-item{padding:5px 0;border-bottom:1px solid #334155}
+.check-item:last-child{border-bottom:0}
+
+.wiring-active .mpin,
+.wiring-active .apin{opacity:.16!important}
+.wiring-active .wiring-match{
+  opacity:1!important;
+  outline:3px solid #00e5ff!important;
+  box-shadow:0 0 12px rgba(0,229,255,.9)!important;
+  z-index:30
+}
+.wiring-banner{
+  display:none;
+  margin-bottom:10px;
+  border:1px solid #0e7490;
+  background:#083344;
+  color:#cffafe;
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:11px;
+}
+.wiring-banner.show{display:block}
+
+.hover-card-title{font-weight:800;font-size:12px;margin-bottom:3px}
+.hover-card-line{color:#cbd5e1}
+.hover-card-label{color:#86efac;font-weight:700}
+
+
+/* v10 final feature + visual polish */
+body{background:
+  radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 28%),
+  radial-gradient(circle at top right, rgba(168,85,247,.08), transparent 24%),
+  var(--page);
+}
+.panel{backdrop-filter:blur(8px)}
+.board{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.55),
+    inset 0 0 35px rgba(0,0,0,.06),
+    0 10px 26px rgba(0,0,0,.12);
+}
+.connector-title{
+  letter-spacing:.5px;
+  color:#1f2937;
+}
+.board.darkboard .connector-title{color:#f8fafc}
+.chip{
+  box-shadow:0 5px 13px rgba(0,0,0,.28), inset 0 0 0 1px #3f3f46;
+}
+.btn,.pill,.filelabel{transition:.15s ease}
+.btn:hover,.pill:hover,.filelabel:hover{transform:translateY(-1px)}
+.mpin,.apin{transition:opacity .15s, transform .12s, box-shadow .12s}
+.mpin:hover,.apin:hover{transform:scale(1.12)}
+
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:10000;
+  display:none;align-items:center;justify-content:center;padding:20px
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  width:min(760px,96vw);max-height:88vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);padding:18px
+}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.modal-head h2{margin:0;font-size:18px}
+.closebtn{border:1px solid #475569;background:#0f172a;color:white;border-radius:8px;padding:6px 9px;cursor:pointer}
+.help-steps{margin:0;padding-left:20px;color:var(--muted);font-size:12px;line-height:1.7}
+.help-note{margin-top:12px;padding:10px;border:1px solid #166534;background:#052e16;color:#bbf7d0;border-radius:8px;font-size:11px}
+
+.free-assistant{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px
+}
+.free-assistant select{
+  background:#0f172a;color:#fff;border:1px solid #475569;border-radius:7px;padding:7px
+}
+.free-status{font-size:11px;color:var(--muted);margin-top:8px}
+.findfree-active .mpin,.findfree-active .apin{opacity:.10!important}
+.findfree-active .free-match{
+  opacity:1!important;
+  outline:3px solid #84cc16!important;
+  box-shadow:0 0 13px rgba(132,204,22,.85)!important;
+  z-index:31
+}
+
+.wiring-list{
+  max-height:390px;overflow:auto;border:1px solid var(--line);border-radius:9px
+}
+.wiring-table{width:100%;border-collapse:collapse;font-size:11px}
+.wiring-table th,.wiring-table td{padding:7px;border-bottom:1px solid var(--line);text-align:left}
+.wiring-table th{position:sticky;top:0;background:#111827;color:#e5e7eb}
+.wiring-table tr[data-pin]{cursor:pointer}
+.wiring-table tr[data-pin]:hover{background:#263247}
+.empty-state{
+  text-align:center;padding:18px;color:var(--muted);font-size:12px
+}
+
+
+/* v10.6 safe toolbar: keep original controls in DOM for their proven handlers, hide duplicates visually */
+#print,#helpBtn,#wiringMode,#checkProject,#wiringListBtn{display:none!important}
+.tools-wrap{position:relative;display:inline-block}
+.tools-menu{display:none;position:absolute;right:0;top:calc(100% + 7px);min-width:190px;z-index:30000;background:#111827;border:1px solid #475569;border-radius:10px;padding:6px;box-shadow:0 14px 36px rgba(0,0,0,.42)}
+.tools-menu.show{display:block}
+.tools-menu button{display:block;width:100%;border:0;background:transparent;color:#e5e7eb;text-align:left;padding:8px 9px;border-radius:7px;font-size:11px;cursor:pointer}
+.tools-menu button:hover{background:#263247}
+.filelabel{border-color:#3b82f6!important;background:linear-gradient(180deg,#2563eb,#1d4ed8)!important;color:#fff!important;font-weight:700;box-shadow:0 5px 14px rgba(37,99,235,.2)}
+
+
+/* =========================================================
+   v10.7 FINAL APPEARANCE — CSS ONLY
+   No HTML or JavaScript behavior changes.
+   ========================================================= */
+
+/* Overall canvas */
+body{
+  background:
+    radial-gradient(circle at 12% -8%, rgba(37,99,235,.14), transparent 32%),
+    radial-gradient(circle at 92% 2%, rgba(168,85,247,.10), transparent 27%),
+    linear-gradient(180deg,#101725 0%,#131c2b 48%,#111827 100%) !important;
+}
+
+.app{
+  max-width:1480px;
+}
+
+/* Panels */
+.panel{
+  background:linear-gradient(180deg,rgba(28,39,59,.985),rgba(22,31,47,.985)) !important;
+  border-color:#3a475a !important;
+  box-shadow:
+    0 16px 38px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+.card{
+  background:linear-gradient(180deg,rgba(15,23,42,.42),rgba(15,23,42,.28)) !important;
+  border-color:#354155 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+}
+
+.card h3{
+  color:#dbe4ee !important;
+  font-weight:800 !important;
+  letter-spacing:.72px !important;
+}
+
+/* Header */
+h1{
+  font-weight:760 !important;
+  letter-spacing:-.35px;
+}
+
+.subtitle{
+  color:#a9b5c4 !important;
+}
+
+/* Main board surface */
+.board{
+  background:
+    linear-gradient(180deg,#ededed 0%,#e3e3e3 100%) !important;
+  border:1px solid rgba(255,255,255,.8);
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.045),
+    inset 0 -18px 34px rgba(0,0,0,.035),
+    0 10px 26px rgba(0,0,0,.13) !important;
+}
+
+.board-title{
+  color:#222831;
+  font-weight:620 !important;
+  letter-spacing:.22px;
+}
+
+.connector-title{
+  color:#252f3d !important;
+  font-weight:800 !important;
+  letter-spacing:.5px;
+}
+
+/* Slightly softer physical pin labels */
+.mname,.amcu{
+  font-weight:650 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);
+}
+
+/* Pin transitions */
+.mpin,.apin{
+  transition:
+    transform .11s ease,
+    opacity .15s ease,
+    filter .15s ease,
+    box-shadow .15s ease,
+    outline-color .15s ease !important;
+}
+
+/* Unconfigured pins are slightly calmer once an IOC is loaded.
+   Existing project/filter JS classes remain untouched. */
+.mpin.unconfigured,
+.apin.unconfigured{
+  opacity:.72;
+  filter:saturate(.78) brightness(.96);
+}
+
+/* Keep configured pins visually dominant */
+.mpin.signal-input,.apin.signal-input,
+.mpin.signal-output,.apin.signal-output,
+.mpin.signal-spi,.apin.signal-spi,
+.mpin.signal-i2c,.apin.signal-i2c,
+.mpin.signal-uart,.apin.signal-uart,
+.mpin.signal-adc,.apin.signal-adc,
+.mpin.signal-timer,.apin.signal-timer,
+.mpin.signal-debug,.apin.signal-debug,
+.mpin.signal-clock,.apin.signal-clock,
+.mpin.used,.apin.used{
+  opacity:1 !important;
+  filter:none !important;
+}
+
+/* Hover: restrained, precise */
+.mpin:hover,.apin:hover{
+  transform:scale(1.085) !important;
+  z-index:20;
+}
+
+/* Selected pin */
+.selected{
+  outline:3px solid #22d3ee !important;
+  box-shadow:
+    0 0 0 2px rgba(34,211,238,.17),
+    0 0 13px rgba(34,211,238,.68) !important;
+  z-index:25 !important;
+}
+
+/* Search */
+.search{
+  border-color:#536176 !important;
+  background:#0d1626 !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,.25),
+    0 1px 0 rgba(255,255,255,.02) !important;
+  transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease !important;
+}
+
+.search:focus{
+  outline:none !important;
+  border-color:#38bdf8 !important;
+  box-shadow:
+    0 0 0 3px rgba(56,189,248,.13),
+    inset 0 1px 2px rgba(0,0,0,.22) !important;
+  transform:translateY(-1px);
+}
+
+/* Upload should read as the primary action */
+.filelabel{
+  background:linear-gradient(180deg,#2f72f3,#1d4ed8) !important;
+  border-color:#4b8bff !important;
+  color:#fff !important;
+  font-weight:760 !important;
+  box-shadow:0 5px 15px rgba(37,99,235,.22) !important;
+}
+
+.filelabel:hover{
+  background:linear-gradient(180deg,#3b82f6,#2563eb) !important;
+}
+
+/* General control polish */
+.btn,.pill,.filter,.copybtn,.closebtn{
+  transition:
+    background .13s ease,
+    border-color .13s ease,
+    color .13s ease,
+    transform .11s ease,
+    box-shadow .13s ease !important;
+}
+
+.btn:hover,.pill:hover,.filter:hover,.copybtn:hover,.closebtn:hover{
+  transform:translateY(-1px);
+}
+
+/* Segmented/filter pills: calmer default, stronger active */
+.pill,.filter{
+  background:#0d1626 !important;
+  border-color:#465468 !important;
+}
+
+.pill.active,.filter.active{
+  background:#344156 !important;
+  color:#fff !important;
+  border-color:#64748b !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+/* Statistics */
+.stats-grid{
+  gap:8px !important;
+}
+
+.stat{
+  min-height:58px;
+  background:
+    linear-gradient(180deg,rgba(30,41,59,.72),rgba(15,23,42,.55)) !important;
+  border-color:#3c495c !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.stat b{
+  font-size:18px !important;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.stat span{
+  font-size:9px !important;
+  letter-spacing:.2px;
+}
+
+/* Warnings/errors */
+.warning{
+  box-shadow:inset 3px 0 0 #f59e0b !important;
+}
+
+.error{
+  box-shadow:inset 3px 0 0 #ef4444 !important;
+}
+
+/* Tooltip */
+.pin-tooltip{
+  background:linear-gradient(180deg,#111b2b,#0b1220) !important;
+  border-color:#536176 !important;
+  box-shadow:0 14px 34px rgba(0,0,0,.44) !important;
+  padding:9px 11px !important;
+}
+
+.hover-card-title{
+  font-size:12px !important;
+  letter-spacing:.1px;
+}
+
+.hover-card-label{
+  font-size:11px;
+  color:#86efac !important;
+  margin:2px 0;
+}
+
+/* Modal appearance only */
+.modal{
+  background:linear-gradient(180deg,#1e293b,#172033) !important;
+  border-color:#4a586b !important;
+  box-shadow:0 26px 76px rgba(0,0,0,.56) !important;
+}
+
+.modal-head{
+  padding-bottom:10px;
+  border-bottom:1px solid #344155;
+}
+
+.closebtn{
+  min-width:68px;
+  font-weight:760;
+  background:#0d1626 !important;
+}
+
+/* Wiring table */
+.wiring-table th{
+  background:#0d1626 !important;
+}
+
+.wiring-table tbody tr:nth-child(even){
+  background:rgba(255,255,255,.017);
+}
+
+/* Tools dropdown */
+.tools-menu{
+  background:linear-gradient(180deg,#111b2b,#0c1422) !important;
+  border-color:#4b586b !important;
+  box-shadow:0 16px 42px rgba(0,0,0,.45) !important;
+}
+
+.tools-menu button{
+  transition:background .12s ease,color .12s ease !important;
+}
+
+.tools-menu button:hover{
+  background:#263449 !important;
+}
+
+/* Find Free mode */
+.findfree-active .mpin,
+.findfree-active .apin{
+  opacity:.055 !important;
+  filter:saturate(.25) brightness(.78) !important;
+}
+
+.findfree-active .free-match{
+  opacity:1 !important;
+  filter:none !important;
+  outline:3px solid #84cc16 !important;
+  box-shadow:
+    0 0 0 2px rgba(132,204,22,.18),
+    0 0 18px rgba(132,204,22,.82) !important;
+  animation:freeGlow 1.35s ease-in-out infinite alternate;
+}
+
+@keyframes freeGlow{
+  from{box-shadow:0 0 0 2px rgba(132,204,22,.14),0 0 11px rgba(132,204,22,.52)}
+  to{box-shadow:0 0 0 2px rgba(132,204,22,.22),0 0 20px rgba(132,204,22,.88)}
+}
+
+/* Wiring mode */
+.wiring-active .mpin,
+.wiring-active .apin{
+  opacity:.07 !important;
+  filter:saturate(.28) brightness(.80) !important;
+}
+
+.wiring-active .wiring-match{
+  opacity:1 !important;
+  filter:none !important;
+  outline:3px solid #22d3ee !important;
+  box-shadow:
+    0 0 0 2px rgba(34,211,238,.18),
+    0 0 18px rgba(34,211,238,.80) !important;
+  animation:wiringGlow 1.35s ease-in-out infinite alternate;
+}
+
+@keyframes wiringGlow{
+  from{box-shadow:0 0 0 2px rgba(34,211,238,.14),0 0 11px rgba(34,211,238,.50)}
+  to{box-shadow:0 0 0 2px rgba(34,211,238,.22),0 0 20px rgba(34,211,238,.88)}
+}
+
+/* Scrollbars */
+*{
+  scrollbar-width:thin;
+  scrollbar-color:#526178 #162033;
+}
+
+*::-webkit-scrollbar{
+  width:9px;
+  height:9px;
+}
+
+*::-webkit-scrollbar-track{
+  background:#162033;
+}
+
+*::-webkit-scrollbar-thumb{
+  background:#526178;
+  border-radius:999px;
+  border:2px solid #162033;
+}
+
+*::-webkit-scrollbar-thumb:hover{
+  background:#64748b;
+}
+
+/* Responsive refinement only */
+@media(max-width:1280px){
+  .app{padding:14px !important}
+  .layout{gap:12px !important}
+  .panel{padding:11px !important}
+}
+
+@media(max-width:1080px){
+  .layout{grid-template-columns:1fr !important}
+}
+
+
+/* v10.8 light-theme repair */
+body.light{
+  --page:#eef2f7;
+  --panel:#ffffff;
+  --line:#cbd5e1;
+  --text:#0f172a;
+  --muted:#64748b;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(37,99,235,.08), transparent 32%),
+    radial-gradient(circle at 92% 2%, rgba(168,85,247,.06), transparent 27%),
+    #eef2f7 !important;
+  color:#0f172a !important;
+}
+
+body.light .panel{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.08) !important;
+}
+
+body.light .card{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#d7dee8 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8) !important;
+}
+
+body.light .card h3{
+  color:#334155 !important;
+}
+
+body.light .subtitle,
+body.light .muted,
+body.light .privacy,
+body.light .free-status{
+  color:#64748b !important;
+}
+
+body.light .big,
+body.light #projectInfo b:first-child{
+  color:#0f172a !important;
+}
+
+body.light .search,
+body.light .free-assistant select{
+  background:#ffffff !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.06) !important;
+}
+
+body.light .search::placeholder{
+  color:#94a3b8 !important;
+}
+
+body.light .btn,
+body.light .pill,
+body.light .filter,
+body.light .copybtn,
+body.light .closebtn{
+  background:#ffffff !important;
+  color:#334155 !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .btn:hover,
+body.light .pill:hover,
+body.light .filter:hover,
+body.light .copybtn:hover,
+body.light .closebtn:hover{
+  background:#f1f5f9 !important;
+}
+
+body.light .pill.active,
+body.light .filter.active{
+  background:#334155 !important;
+  color:#ffffff !important;
+  border-color:#334155 !important;
+}
+
+body.light .filelabel{
+  background:linear-gradient(180deg,#2f72f3,#1d4ed8) !important;
+  color:#ffffff !important;
+  border-color:#3b82f6 !important;
+}
+
+body.light .status{
+  background:#ffffff !important;
+  color:#475569 !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .drop{
+  background:#f8fafc !important;
+  color:#64748b !important;
+  border-color:#94a3b8 !important;
+}
+
+body.light .stat{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#d7dee8 !important;
+}
+
+body.light .tag{
+  color:#475569 !important;
+  border-color:#cbd5e1 !important;
+  background:#ffffff !important;
+}
+
+body.light .code{
+  background:#0f172a !important;
+  color:#d1fae5 !important;
+}
+
+body.light .modal{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+}
+
+body.light .modal-head{
+  border-bottom-color:#d7dee8 !important;
+}
+
+body.light .help-steps,
+body.light .empty-state{
+  color:#64748b !important;
+}
+
+body.light .wiring-list{
+  border-color:#cbd5e1 !important;
+}
+
+body.light .wiring-table th{
+  background:#e2e8f0 !important;
+  color:#0f172a !important;
+}
+
+body.light .wiring-table td{
+  border-bottom-color:#e2e8f0 !important;
+}
+
+body.light .wiring-table tr[data-pin]:hover{
+  background:#eef2ff !important;
+}
+
+body.light .tools-menu{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 16px 36px rgba(15,23,42,.16) !important;
+}
+
+body.light .tools-menu button{
+  color:#334155 !important;
+}
+
+body.light .tools-menu button:hover{
+  background:#eef2f7 !important;
+}
+
+body.light .pin-tooltip{
+  background:linear-gradient(180deg,#ffffff,#f8fafc) !important;
+  color:#0f172a !important;
+  border-color:#cbd5e1 !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.18) !important;
+}
+
+body.light .hover-card-line{
+  color:#475569 !important;
+}
+
+body.light .hover-card-label{
+  color:#15803d !important;
+}
+
+body.light *{
+  scrollbar-color:#94a3b8 #e2e8f0;
+}
+
+body.light *::-webkit-scrollbar-track{
+  background:#e2e8f0;
+}
+
+body.light *::-webkit-scrollbar-thumb{
+  background:#94a3b8;
+  border-color:#e2e8f0;
+}
+
+</style>
+  </head>
+  <body>
+    <div class="print-page">
+      <div class="print-header">
+        <h1>${esc(projectName)}</h1>
+        <div class="print-meta">${esc(mcuName)} · ${configured.length} configured MCU pins</div>
+      </div>
+      <div class="print-board-holder">
+        ${boardClone.outerHTML}
+      </div>
+      <div class="print-footer">Used pins are labelled from the uploaded CubeMX/CubeIDE .ioc file.</div>
+    </div>
+  
+<div id="helpModal" class="modal-backdrop">
+ <div class="modal">
+  <div class="modal-head"><h2>How to use NucleoPin</h2><button class="closebtn" data-close="helpModal">Close</button></div>
+  <ol class="help-steps">
+   <li>Create or select a <b>project</b> in NucleoPin.</li>
+   <li>Add your STM32CubeMX <b>.ioc</b> file to the project. NucleoPin remembers its original location.</li>
+   <li>Use <b>Real Board</b> for a physical view of the NUCLEO board, or switch to <b>Classic Pinout</b> for the connector layout.</li>
+   <li>Use <b>Physical</b> or <b>Project</b> view and the All, Used, Free, GPIO, Comms and ADC filters to focus the board.</li>
+   <li>Click or hover a pin to see its MCU pin, Arduino alias, CubeMX label, signal and physical connector locations.</li>
+   <li>Use <b>Find Free Pin</b> to highlight suitable unused GPIO, ADC, PWM, UART, I²C or SPI pins on both Real Board and Classic Pinout.</li>
+   <li>Use <b>Components</b> and the <b>Wiring List</b> to plan and document your breadboard connections.</li>
+   <li>Run <b>Smart Project Check</b> before wiring to review conflicts and NUCLEO board-specific warnings.</li>
+   <li>Use <b>Open in CubeMX</b> when you need to change the MCU configuration. Save in CubeMX and NucleoPin will reload the IOC.</li>
+   <li>Use <b>Print Pinout</b> for the A4 project printout. Printing always uses the Classic Pinout layout.</li>
+  </ol>
+  <div class="help-note">NucleoPin treats your .ioc as read-only. It reads the original file from your computer and never modifies it.</div>
+ </div>
+</div>
+
+<div id="wiringModal" class="modal-backdrop">
+ <div class="modal">
+  <div class="modal-head"><h2>Project Wiring List</h2><button class="closebtn" data-close="wiringModal">Close</button></div>
+  <div id="wiringListContent" class="wiring-list"></div>
+ </div>
+</div>
+
+
+<div id="runtimeError" style="display:none;position:fixed;left:12px;bottom:12px;z-index:20000;background:#450a0a;color:#fecaca;border:1px solid #991b1b;border-radius:8px;padding:9px 12px;font:11px Segoe UI,Arial,sans-serif;max-width:520px"></div>
+
+</body>
+  </html>`;
+}
+
+
+function escapeWiringPrintHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function buildPrintableDocument(){
+  const original=buildOriginalPrintableDocument();
+  const desktopData=window.NucleoPinDesktopPrintData || {};
+  const rows=Array.isArray(desktopData.wiringRows) ? desktopData.wiringRows : [];
+  const projectTitle=desktopData.projectName || "NucleoPin Project";
+  const iocName=desktopData.iocFile ? desktopData.iocFile.split(/[\\/]/).pop() : "";
+
+  const table=rows.length ? `
+    <table class="np-wire-table">
+      <thead><tr><th>Component</th><th>Signal</th><th>MCU / Power Pin</th><th>Project Label</th><th>Notes</th></tr></thead>
+      <tbody>${rows.map(r=>`<tr>
+        <td>${escapeWiringPrintHtml(r.component||"")}</td>
+        <td>${escapeWiringPrintHtml(r.signal||"")}</td>
+        <td><b>${escapeWiringPrintHtml(r.pin||"")}</b></td>
+        <td>${escapeWiringPrintHtml(r.label||"")}</td>
+        <td>${escapeWiringPrintHtml(r.note||"")}</td>
+      </tr>`).join("")}</tbody>
+    </table>` :
+    `<div class="np-wire-empty">No saved component wiring for this project.</div>`;
+
+
+  function buildPartsChecklist(){
+    const counts=new Map();
+
+    function addPart(name,qty=1,note=""){
+      const key=name+"|"+note;
+      const item=counts.get(key)||{name,qty:0,note};
+      item.qty+=qty;
+      counts.set(key,item);
+    }
+
+    const names=[...new Set(rows.map(r=>r.component).filter(Boolean))];
+
+    names.forEach(name=>{
+      const related=rows.filter(r=>r.component===name);
+      const type=(related[0]?.type||"").trim();
+
+      addPart(name,1,type||"Project component");
+
+      if(type==="LED"){
+        addPart("330 Ω resistor",1,"Series resistor for "+name);
+      }else if(type==="Buzzer"){
+        const notes=related.map(r=>r.note||"").join(" ").toLowerCase();
+        if(notes.includes("transistor")){
+          addPart("NPN transistor / suitable driver",1,"If required by buzzer current");
+        }
+      }else if(type==="Motor / Servo"){
+        addPart("External power supply",1,"Sized for motor/servo load");
+      }
+    });
+
+    return [...counts.values()];
+  }
+
+  const parts=buildPartsChecklist();
+  const partsTable=parts.length ? `
+    <table class="np-parts-table">
+      <thead><tr><th>Qty</th><th>Part</th><th>Notes</th></tr></thead>
+      <tbody>${parts.map(p=>`<tr>
+        <td>${p.qty}</td>
+        <td>${escapeWiringPrintHtml(p.name)}</td>
+        <td>${escapeWiringPrintHtml(p.note||"")}</td>
+      </tr>`).join("")}</tbody>
+    </table>` :
+    `<div class="np-wire-empty">No saved components available for a parts checklist.</div>`;
+
+  const page2=`
+    <section class="np-wire-page">
+      <h1>${escapeWiringPrintHtml(projectTitle)} — Wiring Guide</h1>
+      <div class="np-wire-sub">${iocName ? "IOC: "+escapeWiringPrintHtml(iocName) : ""}</div>
+      <div class="np-wire-summary">
+        <div><b>${rows.length}</b><span>connections</span></div>
+        <div><b>${new Set(rows.map(r=>r.component).filter(Boolean)).size}</b><span>components</span></div>
+        <div><b>${new Set(rows.map(r=>r.pin).filter(Boolean)).size}</b><span>pins / rails</span></div>
+      </div>
+      ${table}
+      <div class="np-parts-section">
+        <h2>Parts Checklist</h2>
+        ${partsTable}
+      </div>
+    </section>`;
+
+  const extraStyle=`<style>
+    @media print{
+      .np-wire-page{page-break-before:always;break-before:page}
+
+      /* Ink saver: keep the exact Page 1 geometry, remove large decorative fills. */
+      html,body{background:#fff!important}
+      body,.page,.print-page,.sheet,.print-shell,.print-wrap,.board-shell,.board-container{
+        background:#fff!important;
+        box-shadow:none!important;
+        border-color:transparent!important;
+      }
+      .board{
+        background:#f8f8f8!important;
+        box-shadow:none!important;
+        border:0!important;
+        outline:0!important;
+      }
+      .panel,.card,.topbar,.header,.footer,.print-header,.print-footer{
+        background:#fff!important;
+        box-shadow:none!important;
+        border-color:transparent!important;
+      }
+
+      /* Functional pin colours stay exact because they communicate meaning. */
+      .mpin,.apin{
+        -webkit-print-color-adjust:exact!important;
+        print-color-adjust:exact!important;
+      }
+    }
+
+    .np-wire-page{font-family:Arial,sans-serif;color:#111;background:#fff;padding:8mm;min-height:185mm}
+    .np-wire-page h1{margin:0 0 2mm;font-size:20pt}
+    .np-wire-sub{font-size:9pt;color:#666;margin-bottom:5mm}
+    .np-wire-summary{display:flex;gap:4mm;margin-bottom:5mm}
+    .np-wire-summary>div{border-bottom:1px solid #bbb;padding:2mm 4mm;min-width:40mm}
+    .np-wire-summary b{display:block;font-size:15pt}
+    .np-wire-summary span{font-size:8pt;color:#666}
+    .np-wire-table{width:100%;border-collapse:collapse;font-size:9pt}
+    .np-wire-table th,.np-wire-table td{border-bottom:1px solid #bbb;padding:2.2mm;vertical-align:top;text-align:left}
+    .np-wire-table th{font-size:8pt;text-transform:uppercase}
+    .np-wire-empty{border-bottom:1px solid #aaa;padding:8mm;text-align:center;color:#666}
+
+    .np-parts-section{margin-top:6mm}
+    .np-parts-section h2{font-size:13pt;margin:0 0 2.5mm}
+    .np-parts-table{width:100%;border-collapse:collapse;font-size:9pt}
+    .np-parts-table th,.np-parts-table td{border-bottom:1px solid #bbb;padding:2mm;text-align:left;vertical-align:top}
+    .np-parts-table th{font-size:8pt;text-transform:uppercase}
+  
+/* =========================================================
+   v0.8.4 — direct Real Board marker rendering
+   Inline JS controls opacity and colour; these rules only size/interact.
+   ========================================================= */
+#board[data-display-mode="real"] .rb-hotspot{
+  width:7px!important;
+  height:7px!important;
+  border-width:1px!important;
+  border-radius:50%!important;
+}
+
+/* Disable legacy pseudo-dot entirely. The hotspot itself IS the dot now. */
+#board[data-display-mode="real"] .rb-hotspot::after{
+  display:none!important;
+}
+
+/* Hover remains easy to see. */
+#board[data-display-mode="real"] .rb-hotspot:hover,
+#board[data-display-mode="real"] .rb-hotspot.hovered,
+#board[data-display-mode="real"] .rb-hotspot.peer-hover{
+  opacity:1!important;
+  transform:translate(-50%,-50%) scale(1.5)!important;
+  border-color:#22d3ee!important;
+  box-shadow:0 0 0 2px rgba(34,211,238,.22)!important;
+}
+
+/* Selected remains yellow. */
+#board[data-display-mode="real"] .rb-hotspot.selected{
+  opacity:1!important;
+  transform:translate(-50%,-50%) scale(1.55)!important;
+  border-color:#facc15!important;
+  box-shadow:0 0 0 2px rgba(250,204,21,.22)!important;
+}
+
+
+/* v0.8.5 — IOC is intentionally read-only */
+.ioc-readonly-note{
+  margin-top:8px;
+  padding:7px 8px;
+  border-radius:7px;
+  border:1px solid #334155;
+  background:#101827;
+  color:#94a3b8;
+  font-size:9px;
+  line-height:1.35;
+}
+
+
+/* v0.9.1 — Find Free on Real Board */
+#board[data-display-mode="real"].findfree-active .rb-hotspot{
+  transition:opacity .12s ease,transform .12s ease,box-shadow .12s ease!important;
+}
+#board[data-display-mode="real"].findfree-active .rb-hotspot[data-visible="1"]{
+  transform:translate(-50%,-50%) scale(1.28)!important;
+}
+
+</style>`;
+
+  // Append only; do not reconstruct or reference any locals from the original function.
+  return original
+    .replace("</head>",extraStyle+"</head>")
+    .replace("</body>",page2+"</body>");
+}
+
+function openPrintWindow(){
+  const printable=buildPrintableDocument();
+
+  // Tauri/WebView2 may block window.open() popups.
+  // Print from a temporary same-origin iframe instead.
+  let frame=document.getElementById("nucleopin-print-frame");
+
+  if(frame){
+    frame.remove();
+  }
+
+  frame=document.createElement("iframe");
+  frame.id="nucleopin-print-frame";
+  frame.setAttribute("aria-hidden","true");
+  frame.style.position="fixed";
+  frame.style.right="0";
+  frame.style.bottom="0";
+  frame.style.width="1px";
+  frame.style.height="1px";
+  frame.style.opacity="0";
+  frame.style.pointerEvents="none";
+  frame.style.border="0";
+
+  document.body.appendChild(frame);
+
+  try{
+    const doc=frame.contentDocument || frame.contentWindow.document;
+    doc.open();
+    doc.write(printable);
+    doc.close();
+
+    let printStarted=false;
+    const doPrint=()=>{
+      if(printStarted)return;
+      printStarted=true;
+      try{
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+      }catch(err){
+        console.error("NucleoPin print failed",err);
+        alert("The Windows print dialog could not be opened.");
+      }
+
+      // Give the print subsystem time to copy the document before removal.
+      setTimeout(()=>{
+        try{frame.remove()}catch{}
+      },1500);
+    };
+
+    if(doc.readyState==="complete"){
+      setTimeout(doPrint,250);
+    }else{
+      frame.onload=()=>setTimeout(doPrint,250);
+      // WebView2 can occasionally skip iframe onload after document.write.
+      setTimeout(()=>{
+        if(document.body.contains(frame)) doPrint();
+      },700);
+    }
+  }catch(err){
+    console.error("NucleoPin print preparation failed",err);
+    try{frame.remove()}catch{}
+    alert("NucleoPin could not prepare the printable pinout.");
+  }
+}
+
+
+document.getElementById("print").onclick=openPrintWindow;
+document.getElementById("theme").onclick=()=>{document.body.classList.toggle("light");document.getElementById("theme").textContent=document.body.classList.contains("light")?"Dark page":"Light page"};
+document.getElementById("search").oninput=refresh;
+document.getElementById("wiringMode").onclick=()=>setWiringMode(!wiringMode);
+document.getElementById("checkProject").onclick=runProjectCheck;
+document.getElementById("findFreeBtn").onclick=()=>findFreeMode?clearFreePins():findFreePins();
+document.getElementById("freeType").onchange=()=>{if(findFreeMode){clearFreePins();findFreePins();}};
+document.getElementById("wiringListBtn").onclick=()=>{buildWiringList();showModal("wiringModal");};
+document.getElementById("helpBtn").onclick=()=>showModal("helpModal");
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>hideModal(b.dataset.close));
+document.querySelectorAll(".modal-backdrop").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)hideModal(m.id)}));
+
+document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;refresh()});
+document.querySelectorAll(".viewbtn").forEach(b=>b.onclick=()=>{document.querySelectorAll(".viewbtn").forEach(x=>x.classList.remove("active"));b.classList.add("active");view=b.dataset.view;refresh()});
+const dz=document.getElementById("drop");["dragenter","dragover"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.add("drag")}));["dragleave","drop"].forEach(e=>dz.addEventListener(e,x=>{x.preventDefault();dz.classList.remove("drag")}));dz.addEventListener("drop",e=>loadFile(e.dataTransfer.files[0]));
+initDisplayMode();
+renderBoard();clearProject();
+
+
+
+
+/* v0.8.4 toolbar safety net: update real board after any toolbar interaction. */
+window.addEventListener("DOMContentLoaded",()=>{
+  const toolbar=document.querySelector(".toolbar");
+  if(toolbar){
+    toolbar.addEventListener("click",()=>{
+      requestAnimationFrame(()=>updateRealBoardState());
+    });
+  }
+
+  const searchBox=document.getElementById("search");
+  if(searchBox){
+    searchBox.addEventListener("input",()=>{
+      requestAnimationFrame(()=>updateRealBoardState());
+    });
+  }
+
+  // Force one real-board render after the initial IOC/board render has completed.
+  requestAnimationFrame(()=>requestAnimationFrame(()=>updateRealBoardState()));
+});
+
+window.addEventListener("error",function(e){
+ const box=document.getElementById("runtimeError");
+ if(!box)return;
+ box.style.display="block";
+ box.textContent="JavaScript error: "+(e.message||"Unknown error");
+});
+
+
+/* NucleoPin Desktop bridge */
+window.getConfiguredPins = function(){
+  return Object.entries(project.cfg || {})
+    .filter(([pin,cfg]) => /^P[A-H]\d+$/.test(pin) && cfg && cfg.Signal)
+    .map(([pin,cfg]) => ({
+      pin,
+      label: cfg.GPIO_Label || "",
+      signal: cfg.Signal || "",
+      mode: cfg.Mode || ""
+    }))
+    .sort((a,b) => a.pin.localeCompare(b.pin));
+};
+
+window.getPinConfig = function(pin){
+  const cfg = (project.cfg || {})[String(pin || "").toUpperCase()];
+  if(!cfg) return null;
+  return {
+    pin: String(pin || "").toUpperCase(),
+    label: cfg.GPIO_Label || "",
+    signal: cfg.Signal || "",
+    mode: cfg.Mode || ""
+  };
+};
+
+</script><div id="pinTooltip" class="pin-tooltip"></div>
+
+<div id="helpModal" class="modal-backdrop">
+ <div class="modal">
+  <div class="modal-head"><h2>How to use NucleoPin</h2><button class="closebtn" data-close="helpModal">Close</button></div>
+  <ol class="help-steps">
+   <li>Create or select a <b>project</b> in NucleoPin.</li>
+   <li>Add your STM32CubeMX <b>.ioc</b> file to the project. NucleoPin remembers its original location.</li>
+   <li>Use <b>Real Board</b> for a physical view of the NUCLEO board, or switch to <b>Classic Pinout</b> for the connector layout.</li>
+   <li>Use <b>Physical</b> or <b>Project</b> view and the All, Used, Free, GPIO, Comms and ADC filters to focus the board.</li>
+   <li>Click or hover a pin to see its MCU pin, Arduino alias, CubeMX label, signal and physical connector locations.</li>
+   <li>Use <b>Find Free Pin</b> to highlight suitable unused GPIO, ADC, PWM, UART, I²C or SPI pins on both Real Board and Classic Pinout.</li>
+   <li>Use <b>Components</b> and the <b>Wiring List</b> to plan and document your breadboard connections.</li>
+   <li>Run <b>Smart Project Check</b> before wiring to review conflicts and NUCLEO board-specific warnings.</li>
+   <li>Use <b>Open in CubeMX</b> when you need to change the MCU configuration. Save in CubeMX and NucleoPin will reload the IOC.</li>
+   <li>Use <b>Print Pinout</b> for the A4 project printout. Printing always uses the Classic Pinout layout.</li>
+  </ol>
+  <div class="help-note">NucleoPin treats your .ioc as read-only. It reads the original file from your computer and never modifies it.</div>
+ </div>
+</div>
+
+<div id="wiringModal" class="modal-backdrop">
+ <div class="modal">
+  <div class="modal-head"><h2>Project Wiring List</h2><button class="closebtn" data-close="wiringModal">Close</button></div>
+  <div id="wiringListContent" class="wiring-list"></div>
+ </div>
+</div>
+
+
+
+<div id="runtimeError" style="display:none;position:fixed;left:12px;bottom:12px;z-index:20000;background:#450a0a;color:#fecaca;border:1px solid #991b1b;border-radius:8px;padding:9px 12px;font:11px Segoe UI,Arial,sans-serif;max-width:520px"></div>
+
+
+<script>
+/* v10.6 late UI binding: runs after modal DOM exists */
+(function(){
+ const btn=document.getElementById("safeToolsBtn");
+ const menu=document.getElementById("safeToolsMenu");
+ if(btn&&menu){
+  btn.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();menu.classList.toggle("show");});
+  menu.addEventListener("click",function(e){
+   const item=e.target.closest("[data-proxy]"); if(!item)return;
+   e.preventDefault();e.stopPropagation();menu.classList.remove("show");
+   const original=document.getElementById(item.dataset.proxy);
+   if(original)original.click();
+  });
+  document.addEventListener("click",function(e){if(!e.target.closest(".tools-wrap"))menu.classList.remove("show");});
+ }
+ document.addEventListener("click",function(e){
+  const close=e.target.closest("[data-close]");
+  if(close){e.preventDefault();e.stopPropagation();const modal=document.getElementById(close.dataset.close);if(modal)modal.classList.remove("show");return;}
+  if(e.target.classList&&e.target.classList.contains("modal-backdrop")){e.target.classList.remove("show");}
+ });
+ document.addEventListener("keydown",function(e){if(e.key==="Escape"){document.querySelectorAll(".modal-backdrop.show").forEach(m=>m.classList.remove("show"));if(menu)menu.classList.remove("show");}});
+})();
+</script>
+</body></html>
