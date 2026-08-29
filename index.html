@@ -5,188 +5,335 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NucleoPin</title>
   <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/src/v11.css" />
 </head>
 <body>
-<div id="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">NP</div>
-      <div><h1>NucleoPin</h1><span>Desktop</span></div>
+<div id="app" class="v11-shell">
+  <aside class="sidebar v11-sidebar">
+    <div class="brand v11-brand">
+      <img src="/src/assets/nucleopin-logo.png" class="brand-logo-img" alt="NucleoPin logo" />
+      <div><h1>NucleoPin</h1><span>Smarter MCU pin planning</span></div>
     </div>
 
-    <button id="newProject" class="primary">+ New Project</button>
+    <nav class="v11-nav" aria-label="NucleoPin sections">
+      <button class="screen-nav active" data-screen="dashboard" type="button"><span>⌂</span>Dashboard</button>
+      <button class="screen-nav" data-screen="planner" type="button"><span>⌘</span>Pin Planner</button>
+      <button class="screen-nav" data-screen="check" type="button"><span>✓</span>Smart Check</button>
+      <button class="screen-nav" data-screen="matrix" type="button"><span>▦</span>Pin Matrix</button>
+      <button class="screen-nav" data-screen="code" type="button"><span>&lt;/&gt;</span>Code Snippets</button>
+      <button class="screen-nav" data-screen="naming" type="button"><span>Aa</span>Naming Guide</button>
+      <button class="screen-nav" data-screen="project" type="button"><span>▤</span>Project</button>
+      <button class="screen-nav" data-screen="settings" type="button"><span>⚙</span>Settings</button>
+    </nav>
 
-    <div class="section-head">
-      <span>PROJECTS</span>
-      <input id="projectSearch" placeholder="Search" />
+    <div class="sidebar-projects">
+      <div class="section-head">
+        <span>PROJECTS</span>
+        <input id="projectSearch" placeholder="Search" />
+      </div>
+      <div id="projectSearchCount" class="project-search-count"></div>
+      <div id="projectList" class="project-list"></div>
+      <button id="newProject" class="primary">+ New Project</button>
     </div>
-    <div id="projectList" class="project-list"></div>
+
+    <div id="appVersion" class="sidebar-version">NucleoPin</div>
   </aside>
 
-  <main class="workspace">
-    <header class="topbar">
+  <main class="workspace v11-workspace">
+    <header class="topbar v11-topbar">
       <div class="project-heading">
+        <div id="screenTitle" class="screen-title">Dashboard</div>
         <div id="activeProjectName" class="project-name">No project selected</div>
         <div id="activeFileMeta" class="file-meta">Create a project or select one from the left.</div>
         <div id="activeIocBadge" class="active-ioc-badge">No active IOC</div>
       </div>
       <div class="top-actions">
-        <button id="renameProject">Rename</button>
-        <button id="openCubeMx" class="secondary" type="button" title="Open active IOC in STM32CubeMX">Open in CubeMX</button>
-<button id="exportProject" class="secondary" type="button">Export Project</button>
-<button id="importProject" class="secondary" type="button">Import Project</button>
-<button id="addIoc">+ Add IOC</button>
+        <span class="top-brand-pill">NP</span>
+        <button id="openCubeMx" class="secondary" type="button">Open in CubeMX</button>
+        <button id="addIoc">+ Add IOC</button>
         <button id="refreshIoc" title="Reload the active IOC from disk">Reload IOC</button>
       </div>
     </header>
 
-    <div class="content-grid">
-      <section class="visualizer-panel">
-        <iframe id="visualizerFrame" src="/visualizer.html" title="NucleoPin visualizer"></iframe>
+    <section class="v11-screen active" data-screen-page="dashboard">
+      <div class="dashboard-stats">
+        <button class="dash-stat dash-stat-button" data-jump-screen="matrix" type="button">
+          <span>Configured Pins</span><b id="dashUsedPins">0</b><small id="dashPinSub">No IOC loaded</small>
+        </button>
+        <button class="dash-stat dash-stat-button" data-jump-screen="planner" type="button">
+          <span>Components</span><b id="dashComponents">0</b><small id="dashComponentSub">Nothing added yet</small>
+        </button>
+        <button class="dash-stat dash-stat-button" data-jump-screen="project" type="button">
+          <span>IOC Files</span><b id="dashIocs">0</b><small id="dashIocSub">No active IOC</small>
+        </button>
+        <button class="dash-stat dash-stat-button" data-jump-screen="check" type="button">
+          <span>Project Health</span><b id="dashCheckState">—</b><small id="dashCheckSub">Run Smart Check</small>
+        </button>
+      </div>
+
+      <div class="dashboard-main">
+        <section class="visualizer-panel dashboard-board">
+          <iframe id="visualizerFrame" src="/visualizer.html" title="NucleoPin visualizer"></iframe>
+        </section>
+
+        <aside class="dashboard-side">
+          <section class="v11-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div><span class="dashboard-kicker">PROJECT</span><h3 id="dashProjectName">No project selected</h3></div>
+              <span id="dashProjectBadge" class="dashboard-health neutral">Waiting</span>
+            </div>
+            <div class="dashboard-info-grid">
+              <span>Active IOC</span><b id="dashActiveIoc">—</b>
+              <span>Peripherals</span><b id="dashPeripherals">0</b>
+              <span>Last change</span><b id="dashLastChange">—</b>
+            </div>
+          </section>
+
+          <section class="v11-card dashboard-card">
+            <div class="dashboard-card-head">
+              <div><span class="dashboard-kicker">RECENT ACTIVITY</span><h3>IOC changes</h3></div>
+            </div>
+            <div id="dashRecentChanges" class="dashboard-recent empty">No IOC changes recorded yet.</div>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <section class="v11-screen" data-screen-page="planner">
+      <div class="screen-head">
+        <div><h2>Pin Planner</h2><p>Add hardware, select its protocol and map each signal to the active IOC.</p></div>
+        <button id="addComponent" class="primary" type="button">+ Add Component</button>
+      </div>
+      <div id="componentList" class="component-list planner-list empty">No components yet.</div>
+      <section class="v11-card">
+        <div class="card-head"><div class="card-title">WIRING TABLE</div><button id="copyWiring" class="small">Copy</button></div>
+        <div id="wiringTable" class="wiring-wrap empty">No wiring to show.</div>
       </section>
+    </section>
 
-      <aside class="details-panel">
-        <div class="tabs tabs-six">
-          <button class="tab active" data-tab="project">Project</button>
-          <button class="tab" data-tab="components">Components</button>
-          <button class="tab" data-tab="wiring">Wiring</button>
-          <button class="tab" data-tab="peripherals">Peripherals</button>
-          <button class="tab" data-tab="activity">Changes</button>
-          <button class="tab" data-tab="check">Check</button>
+    <section class="v11-screen" data-screen-page="check">
+      <div class="screen-head">
+        <div><h2>Smart Check</h2><p>Protocol-aware checks, pin conflicts and Nucleo board warnings.</p></div>
+        <button id="runSmartCheck" class="primary" type="button">Run Check</button>
+      </div>
+      <section class="v11-card">
+        <div id="smartCheckSummary" class="smart-check-summary">Run a check to review the active project.</div>
+        <div id="smartCheckList" class="smart-check-list empty">No check results yet.</div>
+      </section>
+    </section>
+
+    <section class="v11-screen" data-screen-page="matrix">
+      <div class="screen-head"><div><h2>Pin Matrix</h2><p>Configured MCU pins, IOC functions and component assignments in one table.</p></div></div>
+      <section class="v11-card"><div id="pinMatrix" class="pin-matrix empty">Load an IOC to build the matrix.</div></section>
+    </section>
+
+    <section class="v11-screen" data-screen-page="code">
+      <div class="screen-head"><div><h2>Code Snippets</h2><p>Quick HAL references generated from the active IOC.</p></div></div>
+      <div id="codeSnippets" class="code-snippet-grid empty">Load an IOC to generate snippets.</div>
+    </section>
+
+
+    <section class="v11-screen" data-screen-page="naming">
+      <div class="screen-head">
+        <div>
+          <h2>Naming Guide</h2>
+          <p>Pick a component and interface to see suggested names, signals and recommended IOC pins.</p>
         </div>
+      </div>
 
-        <div class="tab-page active" data-page="project">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">IOC FILES</div>
-              <span id="iocCount" class="count">0</span>
+      <div class="naming-controls v11-card">
+        <label>
+          Component
+          <select id="namingComponent">
+            <optgroup label="EEDE226 Class Components">
+              <option>16x2 I2C LCD</option>
+              <option>HY-SRF05 Ultrasonic Sensor</option>
+              <option>DS18B20 Temperature Sensor</option>
+              <option>DHT11 Temp/Humidity Sensor</option>
+              <option>HC-05 Bluetooth Module</option>
+              <option>N20 DC Gear Motor</option>
+              <option>Ambient Light Sensor</option>
+              <option>10K NTC Thermistor Probe</option>
+              <option>0.96in SPI OLED</option>
+              <option>MQ2 Gas Sensor</option>
+              <option>ESP8266 NodeMCU</option>
+              <option>ESP32-S3 Mini Dev Board</option>
+              <option>LED</option>
+              <option>Push Button</option>
+            </optgroup>
+            <optgroup label="General">
+              <option>OLED Display</option>
+              <option>Sensor</option>
+              <option>Buzzer</option>
+              <option>Motor / Servo</option>
+              <option>Communication Module</option>
+            </optgroup>
+</select>
+        </label>
+
+        <label>
+          Protocol / Interface
+          <select id="namingProtocol"></select>
+        </label>
+
+        <label>
+          Example prefix
+          <input id="namingPrefix" value="OLED" placeholder="OLED" />
+        </label>
+      </div>
+
+      <div class="naming-layout">
+        <section class="v11-card naming-card">
+          <div class="naming-card-head">
+            <div>
+              <span class="dashboard-kicker">COMPONENT NAME</span>
+              <h3>Suggested project name</h3>
             </div>
-            <div id="iocList" class="ioc-list empty">No project selected.</div>
-          </section>
+          </div>
+          <div id="namingComponentExamples" class="naming-example-list"></div>
+        </section>
 
-          <section class="card">
-            <div class="card-title">PIN LABELS</div>
-            <div class="inline-form">
-              <input id="pinLabelPin" placeholder="PA5" />
-              <input id="pinLabelName" placeholder="A_GREEN" />
-              <button id="addPinLabel">Add</button>
+        <section class="v11-card naming-card naming-signals-card">
+          <div class="naming-card-head">
+            <div>
+              <span class="dashboard-kicker">PIN LABELS</span>
+              <h3>Suggested CubeMX names & pins</h3>
             </div>
-            <div id="pinLabelList" class="mini-list empty">No custom labels.</div>
-          </section>
+          </div>
+          <div id="namingSignalTable" class="naming-signal-table"></div>
+        </section>
 
-          <section class="card">
-            <div class="card-title">PROJECT NOTES</div>
-            <textarea id="projectNotes" placeholder="Notes about this project..." disabled></textarea>
-            <div class="autosave">Saved automatically</div>
-          </section>
+        <section class="v11-card naming-card">
+          <div class="naming-card-head">
+            <div>
+              <span class="dashboard-kicker">TIPS</span>
+              <h3>Good naming practice</h3>
+            </div>
+          </div>
+          <div id="namingTips" class="naming-tips"></div>
+        </section>
+      </div>
+    </section>
 
-          <section class="card">
-            <div class="card-title">FILE WATCHING</div>
-            <label class="toggle-row">
-              <input id="autoReload" type="checkbox" checked />
-              <span>Reload when active IOC changes</span>
-            </label>
-            <div id="watchStatus" class="watch-status">No IOC selected</div>
-          </section>
-
-          <section class="card danger-card">
-            <button id="aboutApp" class="secondary" type="button">About</button>
-<button id="removeProject" class="danger" disabled>Remove Project</button>
-            <div class="danger-note">Removes it from NucleoPin only. Your IOC files are not deleted.</div>
-          </section>
+    <section class="v11-screen" data-screen-page="project">
+      <div class="screen-head">
+        <div><h2>Project</h2><p>IOC files, custom labels, notes, history and backups.</p></div>
+        <div class="screen-actions">
+          <button id="renameProject">Rename</button>
+          <button id="exportProject" class="secondary" type="button">Export Project</button>
+          <button id="importProject" class="secondary" type="button">Import Project</button>
         </div>
+      </div>
+      <div class="project-grid">
+        <section class="v11-card">
+          <div class="card-head"><div class="card-title">IOC FILES</div><span id="iocCount" class="count">0</span></div>
+          <div id="iocList" class="ioc-list empty">No project selected.</div>
+        </section>
 
-        <div class="tab-page" data-page="components">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">PROJECT COMPONENTS</div>
-              <button id="addComponent" class="small-primary">+ Add</button>
-            </div>
-            <div id="componentList" class="component-list empty">No components yet.</div>
-          </section>
-        </div>
+        <section class="v11-card">
+          <div class="card-title">PIN LABELS</div>
+          <div class="inline-form">
+            <input id="pinLabelPin" placeholder="PA5" />
+            <input id="pinLabelName" placeholder="A_GREEN" />
+            <button id="addPinLabel">Add</button>
+          </div>
+          <div id="pinLabelList" class="mini-list empty">No custom labels.</div>
+        </section>
 
-        <div class="tab-page" data-page="wiring">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">WIRING TABLE</div>
-              <button id="copyWiring" class="small">Copy</button>
-            </div>
-            <div id="wiringTable" class="wiring-wrap empty">No wiring to show.</div>
-          </section>
-        </div>
+        <section class="v11-card project-notes-card">
+          <div class="card-title">PROJECT NOTES</div>
+          <textarea id="projectNotes" placeholder="Notes about this project..." disabled></textarea>
+          <div class="autosave">Saved automatically</div>
+        </section>
 
-        <div class="tab-page" data-page="peripherals">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">ACTIVE PERIPHERALS</div>
-              <span id="peripheralCount" class="count">0</span>
-            </div>
-            <div id="peripheralList" class="peripheral-list empty">Load an IOC to inspect peripherals.</div>
-          </section>
-        </div>
+        <section class="v11-card">
+          <div class="card-title">FILE WATCHING</div>
+          <label class="toggle-row"><input id="autoReload" type="checkbox" checked /><span>Reload when active IOC changes</span></label>
+          <div id="watchStatus" class="watch-status">No IOC selected</div>
+        </section>
 
-        <div class="tab-page" data-page="activity">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">IOC CHANGE HISTORY</div>
-              <button id="clearChanges" class="small">Clear</button>
-            </div>
-            <div id="changeSummary" class="change-summary">No changes recorded yet.</div>
-            <div id="changeList" class="change-list empty">Save the IOC in CubeMX/CubeIDE to see changes here.</div>
-          </section>
-        </div>
+        <section class="v11-card">
+          <div class="card-head"><div class="card-title">ACTIVE PERIPHERALS</div><span id="peripheralCount" class="count">0</span></div>
+          <div id="peripheralList" class="peripheral-list empty">Load an IOC to inspect peripherals.</div>
+        </section>
 
-        <div class="tab-page" data-page="check">
-          <section class="card">
-            <div class="card-head">
-              <div class="card-title">SMART PROJECT CHECK</div>
-              <button id="runSmartCheck" class="small-primary">Run Check</button>
-            </div>
-            <div id="smartCheckSummary" class="smart-check-summary">Run a check to review the active project.</div>
-            <div id="smartCheckList" class="smart-check-list empty">No check results yet.</div>
-          </section>
-        </div>
-      </aside>
-    </div>
+        <section class="v11-card">
+          <div class="card-head"><div class="card-title">IOC CHANGE HISTORY</div><button id="clearChanges" class="small">Clear</button></div>
+          <div id="changeSummary" class="change-summary">No changes recorded yet.</div>
+          <div id="changeList" class="change-list empty">Save the IOC in CubeMX/CubeIDE to see changes here.</div>
+        </section>
+      </div>
+    </section>
+
+    <section class="v11-screen" data-screen-page="settings">
+      <div class="screen-head"><div><h2>Settings</h2><p>Application preferences, updates and project controls.</p></div></div>
+      <div class="settings-grid">
+        <section class="v11-card">
+          <div class="card-title">APPLICATION</div>
+          <button id="aboutApp" class="secondary" type="button">About NucleoPin</button>
+          <div class="settings-note">Window size and position are restored automatically.</div>
+        </section>
+        <section class="v11-card danger-card">
+          <div class="card-title">PROJECT</div>
+          <button id="removeProject" class="danger" disabled>Remove Project</button>
+          <div class="danger-note">Removes it from NucleoPin only. Your IOC files are not deleted.</div>
+        </section>
+      </div>
+    </section>
 
     <footer class="statusbar">
       <span id="statusText">Ready</span>
-      <span id="appVersion">NucleoPin</span>
+      <span>NUCLEO-F401RE / F411RE</span>
     </footer>
   </main>
 </div>
 
 <div id="componentModal" class="modal-backdrop">
-  <div class="modal">
+  <div class="modal protocol-modal">
     <div class="modal-head">
       <div>
         <h2 id="componentModalTitle">Add Component</h2>
-        <div class="modal-sub">Save hardware and the pins it uses in this project.</div>
+        <div class="modal-sub">Choose hardware and interface, then map its signals.</div>
       </div>
       <button id="closeComponentModal" class="close">×</button>
     </div>
 
-    <div class="form-grid">
+    <div class="form-grid form-grid-three">
       <label>Component name<input id="componentName" placeholder="OLED Display" /></label>
       <label>Type
         <select id="componentType">
-          <option>Generic</option>
-          <option>OLED Display</option>
-          <option>LED</option>
-          <option>Push Button</option>
-          <option>Sensor</option>
-          <option>Buzzer</option>
-          <option>Motor / Servo</option>
-          <option>Communication Module</option>
-        </select>
+          <optgroup label="EEDE226 Class Components">
+            <option>16x2 I2C LCD</option>
+            <option>HY-SRF05 Ultrasonic Sensor</option>
+            <option>DS18B20 Temperature Sensor</option>
+            <option>DHT11 Temp/Humidity Sensor</option>
+            <option>HC-05 Bluetooth Module</option>
+            <option>N20 DC Gear Motor</option>
+            <option>Ambient Light Sensor</option>
+            <option>10K NTC Thermistor Probe</option>
+            <option>0.96in SPI OLED</option>
+            <option>MQ2 Gas Sensor</option>
+            <option>ESP8266 NodeMCU</option>
+            <option>ESP32-S3 Mini Dev Board</option>
+            <option>USB A-to-A Cable</option>
+          </optgroup>
+          <optgroup label="General Components">
+            <option>Generic</option>
+            <option>OLED Display</option>
+            <option>LED</option>
+            <option>Push Button</option>
+            <option>Sensor</option>
+            <option>Buzzer</option>
+            <option>Motor / Servo</option>
+            <option>Communication Module</option>
+          </optgroup>
+</select>
       </label>
+      <label>Protocol / Interface<select id="componentProtocol"></select></label>
     </div>
+    <div id="protocolHint" class="protocol-hint">Choose a component type to see available interfaces.</div>
 
-    <div class="connections-head">
-      <b>Connections</b>
-      <button id="addConnectionRow" class="small-primary">+ Connection</button>
-    </div>
+    <div class="connections-head"><b>Signals / Connections</b><button id="addConnectionRow" class="small-primary">+ Connection</button></div>
     <div id="connectionRows"></div>
 
     <div class="modal-actions">
@@ -196,79 +343,67 @@
   </div>
 </div>
 
-
 <div id="welcomeOverlay" class="welcome-overlay">
   <div class="welcome-card">
-    <div class="welcome-mark">NP</div>
+    <img src="/src/assets/nucleopin-logo.png" class="welcome-logo-img" alt="" />
     <h2>Welcome to NucleoPin</h2>
     <p>Plan, inspect and document your STM32 NUCLEO project without modifying the CubeMX IOC.</p>
-
     <div class="welcome-flow">
       <b>1</b><span>Create or select a project</span>
       <b>2</b><span>Add your IOC</span>
       <b>3</b><span>Start planning</span>
     </div>
-
     <div class="welcome-actions">
       <button id="welcomeContinue" class="primary" type="button">Continue to NucleoPin</button>
       <button id="welcomeCreate" class="secondary" type="button">Create New Project</button>
     </div>
-
     <div id="welcomeVersion" class="welcome-build">NucleoPin</div>
-    <label class="welcome-pref">
-      <input id="welcomeDontShow" type="checkbox">
-      <span>Don't show this on startup</span>
-    </label>
+    <label class="welcome-pref"><input id="welcomeDontShow" type="checkbox"><span>Don't show this on startup</span></label>
   </div>
 </div>
 
 <div id="missingIocModal" class="shell-modal" hidden>
   <div class="shell-modal-card">
-    <h2>IOC file not found</h2>
-    <p id="missingIocText"></p>
-    <div class="shell-modal-actions">
-      <button id="locateMissingIoc" class="primary" type="button">Locate File</button>
-      <button id="closeMissingIoc" class="secondary" type="button">Close</button>
-    </div>
+    <h2>IOC file not found</h2><p id="missingIocText"></p>
+    <div class="shell-modal-actions"><button id="locateMissingIoc" class="primary" type="button">Locate File</button><button id="closeMissingIoc" class="secondary" type="button">Close</button></div>
   </div>
 </div>
 
 <div id="aboutModal" class="shell-modal" hidden>
   <div class="shell-modal-card">
-    <h2 id="aboutVersion">NucleoPin</h2>
+    <div class="about-brand">
+      <img src="/src/assets/nucleopin-logo.png" alt="NucleoPin logo" />
+      <div>
+        <h2 id="aboutVersion">NucleoPin</h2>
+        <span>Smarter MCU pin planning</span>
+      </div>
+    </div>
     <p>STM32 NUCLEO pinout, wiring and project companion.</p>
     <div class="about-grid">
       <span>Supported boards</span><b>NUCLEO-F401RE / F411RE</b>
       <span>IOC handling</span><b>Read-only</b>
       <span>Configuration editor</span><b>STM32CubeMX</b>
-      <span>Release status</span><b>Stable Release</b>
+      <span>Release status</span><b>v1.1 Preview</b>
     </div>
-    <label class="about-welcome-toggle">
-      <input id="aboutShowWelcome" type="checkbox">
-      <span>Show Welcome screen on startup</span>
-    </label>
+    <label class="about-welcome-toggle"><input id="aboutShowWelcome" type="checkbox"><span>Show Welcome screen on startup</span></label>
     <div class="update-panel"><div><b>Software updates</b><span id="updateStatus">Automatic update checking is enabled.</span></div><button id="checkForUpdates" class="secondary" type="button">Check for Updates</button></div>
     <button id="showWelcomeNow" class="secondary" type="button">Show Welcome Now</button>
     <button id="closeAbout" class="primary" type="button">Close</button>
   </div>
 </div>
 
-
 <div id="updateAvailableModal" class="shell-modal" hidden style="z-index:20000">
   <div class="shell-modal-card">
     <h2>Update available</h2>
     <p id="updateAvailableText">A newer version of NucleoPin is available.</p>
-    <div class="shell-modal-actions">
-      <button id="installAvailableUpdate" class="primary" type="button">Install Update</button>
-      <button id="laterAvailableUpdate" class="secondary" type="button">Later</button>
-    </div>
+    <div class="shell-modal-actions"><button id="installAvailableUpdate" class="primary" type="button">Install Update</button><button id="laterAvailableUpdate" class="secondary" type="button">Later</button></div>
   </div>
 </div>
 
 <div id="appToast" class="app-toast" role="status" aria-live="polite">
-  <span id="appToastText"></span>
-  <button id="appToastAction" type="button" hidden></button>
+  <span id="appToastText"></span><button id="appToastAction" type="button" hidden></button>
 </div>
+
 <script type="module" src="/src/main.js"></script>
 </body>
 </html>

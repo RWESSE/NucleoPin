@@ -821,9 +821,7 @@ body.light *::-webkit-scrollbar-thumb{
   opacity:.08!important;
 }
 
-/* Project + All: "All" really means all visible connector pins.
-   Configured pins keep their signal styling, while unused pins remain visible
-   instead of being almost completely faded by Project mode. */
+/* Project + All: all connector pins remain visible. */
 .board.projectmode[data-active-filter="all"] .mpin.filter-visible,
 .board.projectmode[data-active-filter="all"] .apin.filter-visible{
   opacity:1!important;
@@ -1371,6 +1369,400 @@ body.light *::-webkit-scrollbar-thumb{
   opacity:1!important;
 }
 
+
+
+
+
+
+
+/* =========================================================
+   v1.1 Step 9c — Physical connector alignment
+   Matches the Nucleo-64 connector layout:
+   - CN6 pin 1 aligns with CN7 row 5
+   - CN6 VIN aligns with CN7 VIN (pin 24)
+   - CN8 pin 1 aligns with CN7 row 14
+   - CN5 pin 10 aligns with CN10 row 1
+   - CN9 pin 8 aligns with CN10 row 12
+   ========================================================= */
+
+#board[data-display-mode="classic"]{
+  --classic-row-h:27px;
+  --classic-title-h:30px;
+  --classic-pin-canvas-h:calc(19 * var(--classic-row-h));
+  --classic-panel-h:calc(var(--classic-title-h) + var(--classic-pin-canvas-h));
+
+  background:
+    radial-gradient(circle at 50% 42%,rgba(30,107,174,.09),transparent 31%),
+    linear-gradient(180deg,#091827,#07131f)!important;
+  color:#eef7ff!important;
+  border:1px solid #294a67!important;
+  border-radius:14px!important;
+  padding:20px 22px 18px!important;
+  min-height:650px!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.03),
+    0 12px 28px rgba(0,0,0,.18)!important;
+  overflow:auto!important;
+}
+
+#board[data-display-mode="classic"] .board-title{
+  margin:2px 0 18px!important;
+  color:#f3f8ff!important;
+  font-size:27px!important;
+  font-weight:850!important;
+  letter-spacing:.25px!important;
+}
+
+#board[data-display-mode="classic"] .board-title::after{
+  content:"Classic connector map · physical Nucleo-64 alignment";
+  display:block;
+  margin-top:4px;
+  color:#829ab2;
+  font-size:11px;
+  font-weight:500;
+}
+
+/* Overall geometry: [CN7 | CN6/CN8]  MCU  [CN5/CN9 | CN10] */
+#board[data-display-mode="classic"] .board-grid{
+  width:min(100%,1020px)!important;
+  min-width:900px!important;
+  margin:0 auto!important;
+  grid-template-columns:minmax(330px,1fr) 145px minmax(330px,1fr)!important;
+  gap:24px!important;
+  align-items:start!important;
+}
+
+/* Each side is two physically adjacent connector columns. */
+#board[data-display-mode="classic"] .leftcluster,
+#board[data-display-mode="classic"] .rightcluster{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:12px!important;
+  align-items:start!important;
+  min-width:0!important;
+}
+
+/* All four side panels share exactly the same physical height. */
+#board[data-display-mode="classic"] .leftcluster > div,
+#board[data-display-mode="classic"] .rightcluster > div{
+  position:relative!important;
+  height:var(--classic-panel-h)!important;
+  min-height:var(--classic-panel-h)!important;
+  background:linear-gradient(180deg,#10243a,#0c1b2d)!important;
+  border:1px solid #294b69!important;
+  border-radius:11px!important;
+  padding:0 9px 8px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+  overflow:visible!important;
+}
+
+/* Outer Morpho connector titles occupy the shared 30px title band. */
+#board[data-display-mode="classic"] .leftcluster > div:first-child > .connector-title,
+#board[data-display-mode="classic"] .rightcluster > div:last-child > .connector-title{
+  height:var(--classic-title-h)!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:#edf6ff!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  letter-spacing:.5px!important;
+}
+
+/* Outer Morpho rows begin at exactly y = title band. */
+#board[data-display-mode="classic"] #cn7,
+#board[data-display-mode="classic"] #cn10{
+  position:absolute!important;
+  left:9px!important;
+  right:9px!important;
+  top:var(--classic-title-h)!important;
+}
+
+/* Arduino inner-column containers use the same 19-row coordinate system. */
+#board[data-display-mode="classic"] .leftArduino,
+#board[data-display-mode="classic"] .rightArduino{
+  position:relative!important;
+}
+
+/* CN6 pin 1 = CN7 physical row 5.
+   Therefore CN6 pin 8 lands exactly on CN7 row 12 / pin 24 VIN. */
+#board[data-display-mode="classic"] .leftArduino > .connector-title:first-child{
+  position:absolute!important;
+  top:calc(var(--classic-title-h) + 4 * var(--classic-row-h) - 25px)!important;
+  left:0!important;
+  right:0!important;
+}
+
+#board[data-display-mode="classic"] #cn6{
+  position:absolute!important;
+  left:9px!important;
+  right:9px!important;
+  top:calc(var(--classic-title-h) + 4 * var(--classic-row-h))!important;
+}
+
+/* CN8 pin 1 = CN7 physical row 14. */
+#board[data-display-mode="classic"] .leftArduino > .connector-title:nth-of-type(2){
+  position:absolute!important;
+  top:calc(var(--classic-title-h) + 13 * var(--classic-row-h) - 25px)!important;
+  left:0!important;
+  right:0!important;
+}
+
+#board[data-display-mode="classic"] #cn8{
+  position:absolute!important;
+  left:9px!important;
+  right:9px!important;
+  top:calc(var(--classic-title-h) + 13 * var(--classic-row-h))!important;
+}
+
+/* CN5 pin 10 starts level with CN10 row 1. */
+#board[data-display-mode="classic"] .rightArduino > .connector-title:first-child{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+}
+
+#board[data-display-mode="classic"] #cn5{
+  position:absolute!important;
+  left:9px!important;
+  right:9px!important;
+  top:var(--classic-title-h)!important;
+}
+
+/* CN9 pin 8 starts level with CN10 physical row 12,
+   and CN9 pin 1 therefore finishes level with CN10 row 19. */
+#board[data-display-mode="classic"] .rightArduino > .connector-title:nth-of-type(2){
+  position:absolute!important;
+  top:calc(var(--classic-title-h) + 11 * var(--classic-row-h) - 25px)!important;
+  left:0!important;
+  right:0!important;
+}
+
+#board[data-display-mode="classic"] #cn9{
+  position:absolute!important;
+  left:9px!important;
+  right:9px!important;
+  top:calc(var(--classic-title-h) + 11 * var(--classic-row-h))!important;
+}
+
+/* The old spacer is no longer part of layout; physical rows control placement. */
+#board[data-display-mode="classic"] .leftArduino > .gap,
+#board[data-display-mode="classic"] .rightArduino > .gap{
+  display:none!important;
+}
+
+/* Connector title styling for absolutely positioned inner headers. */
+#board[data-display-mode="classic"] .leftArduino > .connector-title,
+#board[data-display-mode="classic"] .rightArduino > .connector-title{
+  height:24px!important;
+  margin:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:#edf6ff!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  letter-spacing:.5px!important;
+  pointer-events:none!important;
+}
+
+/* A strict row pitch makes the physical alignment exact. */
+#board[data-display-mode="classic"] .mrow,
+#board[data-display-mode="classic"] .atrace-row{
+  height:var(--classic-row-h)!important;
+  min-height:var(--classic-row-h)!important;
+  max-height:var(--classic-row-h)!important;
+}
+
+/* Compact labels so both columns fit without changing pitch. */
+#board[data-display-mode="classic"] .mrow{
+  grid-template-columns:68px 26px 26px 68px!important;
+}
+
+#board[data-display-mode="classic"] .atrace-row{
+  grid-template-columns:64px 26px 26px 72px!important;
+}
+
+#board[data-display-mode="classic"] .mname,
+#board[data-display-mode="classic"] .amcu{
+  color:#67b7ff!important;
+  font-size:12px!important;
+  font-weight:750!important;
+  text-shadow:none!important;
+}
+
+#board[data-display-mode="classic"] .alabel{
+  color:#ff55ce!important;
+  font-size:12px!important;
+  font-weight:800!important;
+}
+
+#board[data-display-mode="classic"] .mpin,
+#board[data-display-mode="classic"] .apin{
+  min-width:24px!important;
+  height:21px!important;
+  border-radius:5px!important;
+  border:1px solid rgba(255,255,255,.27)!important;
+  color:#fff!important;
+  font:bold 10px/1 Segoe UI,Arial,sans-serif!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.17)!important;
+}
+
+#board[data-display-mode="classic"] .mpin{
+  background:linear-gradient(180deg,#2d6be8,#1b4db8)!important;
+}
+
+#board[data-display-mode="classic"] .apin{
+  width:25px!important;
+  background:linear-gradient(180deg,#ef42c6,#b51a92)!important;
+}
+
+#board[data-display-mode="classic"] .mpin.special,
+#board[data-display-mode="classic"] .apin.special{
+  background:linear-gradient(180deg,#56677a,#384657)!important;
+  color:#e6eef6!important;
+}
+
+#board[data-display-mode="classic"] .trace{
+  height:2px!important;
+  background:#66829a!important;
+  opacity:.85;
+}
+
+/* MCU block centered vertically against the physical connector height. */
+#board[data-display-mode="classic"] .center{
+  height:var(--classic-panel-h)!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+#board[data-display-mode="classic"] .chip{
+  width:118px!important;
+  height:112px!important;
+  border-radius:14px!important;
+  border:1px solid #355978!important;
+  background:linear-gradient(145deg,#132b43,#081421)!important;
+  color:#eef7ff!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 10px 24px rgba(0,0,0,.24)!important;
+}
+
+/* Functional color accents */
+#board[data-display-mode="classic"] .signal-input{box-shadow:inset 3px 0 var(--input)!important}
+#board[data-display-mode="classic"] .signal-output{box-shadow:inset 3px 0 var(--output)!important}
+#board[data-display-mode="classic"] .signal-spi{box-shadow:inset 3px 0 var(--spi)!important}
+#board[data-display-mode="classic"] .signal-i2c{box-shadow:inset 3px 0 var(--i2c)!important}
+#board[data-display-mode="classic"] .signal-uart{box-shadow:inset 3px 0 var(--uart)!important}
+#board[data-display-mode="classic"] .signal-adc{box-shadow:inset 3px 0 var(--adc)!important}
+#board[data-display-mode="classic"] .signal-timer{box-shadow:inset 3px 0 var(--timer)!important}
+#board[data-display-mode="classic"] .signal-debug{box-shadow:inset 3px 0 var(--debug)!important}
+#board[data-display-mode="classic"] .signal-clock{box-shadow:inset 3px 0 var(--clock)!important}
+
+#board[data-display-mode="classic"] .legend{
+  width:min(100%,940px)!important;
+  margin:18px auto 0!important;
+  padding:9px 11px!important;
+  border:1px solid #26455f!important;
+  border-radius:9px!important;
+  background:#091827!important;
+  color:#a7bbce!important;
+  font-size:10px!important;
+  gap:10px!important;
+}
+
+/* Project mode remains readable. */
+#board[data-display-mode="classic"].projectmode .mname,
+#board[data-display-mode="classic"].projectmode .amcu{
+  opacity:.46!important;
+}
+
+#board[data-display-mode="classic"].projectmode .unconfigured{
+  opacity:.28!important;
+}
+
+#board[data-display-mode="classic"].projectmode .configured-label{
+  opacity:1!important;
+  color:#fff!important;
+}
+
+/* Interaction */
+#board[data-display-mode="classic"] .mpin:hover,
+#board[data-display-mode="classic"] .apin:hover{
+  transform:scale(1.12)!important;
+  outline:2px solid #4fd3ff!important;
+  outline-offset:2px;
+}
+
+#board[data-display-mode="classic"] .selected{
+  outline:2px solid #facc15!important;
+  outline-offset:2px;
+}
+
+/* Local horizontal scrolling preserves the physical geometry on small windows. */
+@media(max-width:1180px){
+  #board[data-display-mode="classic"] .board-grid{
+    min-width:900px!important;
+  }
+}
+
+/* Print remains a clean technical drawing while retaining physical alignment. */
+@media print{
+  #board[data-display-mode="classic"]{
+    background:#fff!important;
+    color:#111!important;
+    border-color:#cbd5e1!important;
+    box-shadow:none!important;
+  }
+
+  #board[data-display-mode="classic"] .board-title{
+    color:#111!important;
+  }
+
+  #board[data-display-mode="classic"] .board-title::after{
+    color:#555!important;
+  }
+
+  #board[data-display-mode="classic"] .leftcluster > div,
+  #board[data-display-mode="classic"] .rightcluster > div{
+    background:#fff!important;
+    border-color:#cbd5e1!important;
+    box-shadow:none!important;
+  }
+
+  #board[data-display-mode="classic"] .connector-title{
+    color:#111!important;
+  }
+
+  #board[data-display-mode="classic"] .mname,
+  #board[data-display-mode="classic"] .amcu{
+    color:#174ea6!important;
+  }
+
+  #board[data-display-mode="classic"] .alabel{
+    color:#b00083!important;
+  }
+
+  #board[data-display-mode="classic"] .chip{
+    background:#f3f4f6!important;
+    color:#111!important;
+    border-color:#94a3b8!important;
+    box-shadow:none!important;
+  }
+
+  #board[data-display-mode="classic"] .legend{
+    background:#fff!important;
+    color:#222!important;
+    border-color:#cbd5e1!important;
+  }
+}
+
 </style></head>
 <body>
 <div class="app">
@@ -1743,9 +2135,7 @@ function updateRealBoardState(){
     let filterOk=false;
     switch(realFilter){
       case "all":
-        // "All" means every physical socket, regardless of Physical/Project view.
-        // Configured sockets still keep their function colour; unused/special sockets
-        // remain neutral.
+        // All means every physical socket in both Physical and Project view.
         filterOk = true;
         break;
       case "used":
@@ -3130,10 +3520,41 @@ function buildPrintableDocument(){
     const counts=new Map();
 
     function addPart(name,qty=1,note=""){
-      const key=name+"|"+note;
-      const item=counts.get(key)||{name,qty:0,note};
+      const key=name;
+      const item=counts.get(key)||{name,qty:0,note:"",sources:[]};
       item.qty+=qty;
+
+      if(note && !item.note)item.note=note;
       counts.set(key,item);
+      return item;
+    }
+
+    function addSource(item,source){
+      if(source && !item.sources.includes(source))item.sources.push(source);
+    }
+
+    function ledColourFromName(name=""){
+      const n=String(name).toUpperCase();
+
+      const colours=[
+        ["GREEN","Green"],
+        ["YELLOW","Yellow"],
+        ["AMBER","Amber"],
+        ["ORANGE","Orange"],
+        ["RED","Red"],
+        ["BLUE","Blue"],
+        ["WHITE","White"],
+        ["PURPLE","Purple"],
+        ["VIOLET","Violet"],
+        ["CYAN","Cyan"],
+        ["PINK","Pink"]
+      ];
+
+      for(const [token,label] of colours){
+        if(n.includes(token))return label;
+      }
+
+      return "";
     }
 
     const names=[...new Set(rows.map(r=>r.component).filter(Boolean))];
@@ -3142,21 +3563,111 @@ function buildPrintableDocument(){
       const related=rows.filter(r=>r.component===name);
       const type=(related[0]?.type||"").trim();
 
-      addPart(name,1,type||"Project component");
+      if(type==="16x2 I2C LCD"){
+        const x=addPart("16x2 I2C LCD",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="HY-SRF05 Ultrasonic Sensor"){
+        const x=addPart("HY-SRF05 Ultrasonic Sensor",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="DS18B20 Temperature Sensor"){
+        const x=addPart("DS18B20 Temperature Sensor",1,"EEDE226 class component");addSource(x,name);
+        addPart("4.7 kΩ resistor",1,"1-Wire pull-up");
+      }
+      else if(type==="DHT11 Temp/Humidity Sensor"){
+        const x=addPart("DHT11 Temp/Humidity Sensor",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="HC-05 Bluetooth Module"){
+        const x=addPart("HC-05 Bluetooth Module",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="N20 DC Gear Motor"){
+        const x=addPart("N20 DC Gear Motor",1,"EEDE226 class component");addSource(x,name);
+        addPart("H-bridge / motor driver",1,"Required between STM32 and DC motor");
+        addPart("External motor supply",1,"Sized for N20 motor");
+      }
+      else if(type==="Ambient Light Sensor"){
+        const x=addPart("Ambient Light Sensor",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="10K NTC Thermistor Probe"){
+        const x=addPart("10K NTC Thermistor Probe",1,"EEDE226 class component");addSource(x,name);
+        addPart("Fixed resistor for NTC divider",1,"Choose value for desired temperature range");
+      }
+      else if(type==="0.96in SPI OLED"){
+        const x=addPart("0.96in SPI OLED 128x64",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="MQ2 Gas Sensor"){
+        const x=addPart("MQ2 Gas Sensor Module",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="ESP8266 NodeMCU"){
+        const x=addPart("ESP8266 NodeMCU",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="ESP32-S3 Mini Dev Board"){
+        const x=addPart("ESP32-S3 Mini Dev Board",1,"EEDE226 class component");addSource(x,name);
+      }
+      else if(type==="USB A-to-A Cable"){
+        addPart("USB A-to-A Cable",1,"EEDE226 class component");
+      }
+      else if(type==="LED"){
+        const colour=ledColourFromName(name);
+        const partName=colour ? `${colour} LED` : "LED (colour not specified)";
+        const led=addPart(partName,1,colour ? "" : "Check component name / colour");
+        addSource(led,name);
 
-      if(type==="LED"){
-        addPart("330 Ω resistor",1,"Series resistor for "+name);
-      }else if(type==="Buzzer"){
+        const resistor=addPart("330 Ω resistor",1,"Series resistor for LEDs");
+        addSource(resistor,name);
+      }
+      else if(type==="Push Button"){
+        const button=addPart("Push Button",1,"");
+        addSource(button,name);
+      }
+      else if(type==="Buzzer"){
+        const buzzer=addPart("Buzzer",1,"");
+        addSource(buzzer,name);
+
         const notes=related.map(r=>r.note||"").join(" ").toLowerCase();
         if(notes.includes("transistor")){
           addPart("NPN transistor / suitable driver",1,"If required by buzzer current");
         }
-      }else if(type==="Motor / Servo"){
+      }
+      else if(type==="OLED Display"){
+        const oled=addPart("OLED Display",1,"");
+        addSource(oled,name);
+      }
+      else if(type==="Sensor"){
+        const sensor=addPart("Sensor",1,"");
+        addSource(sensor,name);
+      }
+      else if(type==="Motor / Servo"){
+        const motor=addPart("Motor / Servo",1,"");
+        addSource(motor,name);
         addPart("External power supply",1,"Sized for motor/servo load");
+      }
+      else if(type==="Communication Module"){
+        const module=addPart("Communication Module",1,"");
+        addSource(module,name);
+      }
+      else if(type && type!=="Generic"){
+        const grouped=addPart(type,1,"");
+        addSource(grouped,name);
+      }
+      else{
+        // Generic/unknown hardware stays named so unrelated parts are not combined.
+        addPart(name,1,type||"Project component");
       }
     });
 
-    return [...counts.values()];
+    return [...counts.values()].map(item=>{
+      let note=item.note||"";
+
+      // Preserve traceability without making every component its own row.
+      if(item.sources.length>1){
+        const sourceText=item.sources.join(", ");
+        note=note ? `${note} · ${sourceText}` : sourceText;
+      }else if(item.sources.length===1 && item.name==="LED (colour not specified)"){
+        note=note ? `${note} · ${item.sources[0]}` : item.sources[0];
+      }
+
+      return {name:item.name,qty:item.qty,note};
+    });
   }
 
   const parts=buildPartsChecklist();
