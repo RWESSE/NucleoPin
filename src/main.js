@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { getVersion } from "@tauri-apps/api/app";
 import { open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import { check } from "@tauri-apps/plugin-updater";
 
@@ -1066,7 +1067,22 @@ async function importProjectBackup(){
  }
 }
 
+async function updateDisplayedVersion(){
+ try{
+   const version=await getVersion();
 
+   const footer=$("appVersion");
+   if(footer)footer.textContent=`NucleoPin v${version}`;
+
+   const about=$("aboutVersion");
+   if(about)about.textContent=`NucleoPin v${version}`;
+
+   const welcome=$("welcomeVersion");
+   if(welcome)welcome.textContent=`v${version}`;
+ }catch(e){
+   console.error("Could not read app version:",e);
+ }
+}
 
 let pendingUpdate=null,updateCheckBusy=false;
 function setUpdateStatus(text){const el=$("updateStatus");if(el)el.textContent=text}
@@ -1202,6 +1218,7 @@ document.addEventListener("keydown",e=>{
 });
 frame.addEventListener("load",publishWiringToVisualizer);
 applyWelcomeStartupPreference();
+updateDisplayedVersion();
 watchTimer=setInterval(poll,3000);
 load();
 setTimeout(()=>checkForAppUpdate({manual:false}),4500);
