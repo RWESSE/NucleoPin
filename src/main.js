@@ -1085,30 +1085,153 @@ async function updateDisplayedVersion(){
 }
 
 let pendingUpdate=null,updateCheckBusy=false;
-function setUpdateStatus(text){const el=$("updateStatus");if(el)el.textContent=text}
+
+function setUpdateStatus(text){
+ const el=$("updateStatus");
+ if(el)el.textContent=text;
+}
+
+function showUpdateAvailableModal(update){
+ const modal=$("updateAvailableModal");
+ const text=$("updateAvailableText");
+
+ if(!modal||!text||!update)return;
+
+ text.textContent=
+   `NucleoPin ${update.version} is available. Updating is recommended before continuing.`;
+
+ modal.hidden=false;
+}
+
+function hideUpdateAvailableModal(){
+ const modal=$("updateAvailableModal");
+ if(modal)modal.hidden=true;
+}
+
 async function installPendingUpdate(){
  if(!pendingUpdate)return;
+
  try{
-  setUpdateStatus(`Installing NucleoPin ${pendingUpdate.version}...`);
-  await pendingUpdate.downloadAndInstall((e)=>{
-   if(e.event==="Started")setUpdateStatus(`Downloading NucleoPin ${pendingUpdate.version}...`);
-   else if(e.event==="Finished")setUpdateStatus("Download complete · starting installer...");
-  });
- }catch(e){console.error("Update installation failed:",e);setUpdateStatus("Update installation failed.");showToast("Could not install the update")}
-}
-async function checkForAppUpdate({manual=false}={}){
- if(updateCheckBusy)return; updateCheckBusy=true;
- const btn=$("checkForUpdates");if(btn)btn.disabled=true;
- if(manual)setUpdateStatus("Checking for updates...");
- try{
-  const update=await check();pendingUpdate=update||null;
-  if(update){setUpdateStatus(`NucleoPin ${update.version} is available.`);showToast(`NucleoPin ${update.version} is available`,"Install Update",installPendingUpdate,12000)}
-  else{setUpdateStatus("NucleoPin is up to date.");if(manual)showToast("You're using the latest version")}
+   hideUpdateAvailableModal();
+
+   setUpdateStatus(
+     `Installing NucleoPin ${pendingUpdate.version}...`
+   );
+
+   await pendingUpdate.downloadAndInstall((e)=>{
+     if(e.event==="Started"){
+       setUpdateStatus(
+         `Downloading NucleoPin ${pendingUpdate.version}...`
+       );
+     }
+     else if(e.event==="Finished"){
+       setUpdateStatus(
+         "Download complete · starting installer..."
+       );
+     }
+   });
+
  }catch(e){
-  console.error("Update check failed:",e);
-  if(manual){setUpdateStatus("Could not check for updates.");showToast("Could not check for updates")}
-  else setUpdateStatus("Automatic update check unavailable.");
- }finally{updateCheckBusy=false;if(btn)btn.disabled=false}
+   console.error("Update installation failed:",e);
+
+   setUpdateStatus(
+     "Update installation failed."
+   );
+
+   showToast(
+     "Could not install the update"
+   );
+ }
+}
+
+async function checkForAppUpdate({manual=false}={}){
+ if(updateCheckBusy)return;
+
+ updateCheckBusy=true;
+
+ const btn=$("checkForUpdates");
+
+ if(btn)btn.disabled=true;
+
+ if(manual){
+   setUpdateStatus(
+     "Checking for updates..."
+   );
+ }
+
+ try{
+   const update=await check();
+
+   pendingUpdate=update||null;
+
+   if(update){
+
+     setUpdateStatus(
+       `NucleoPin ${update.version} is available.`
+     );
+
+     if(manual){
+
+       showToast(
+         `NucleoPin ${update.version} is available`,
+         "Install Update",
+         installPendingUpdate,
+         12000
+       );
+
+     }else{
+
+       showUpdateAvailableModal(update);
+
+     }
+
+   }else{
+
+     hideUpdateAvailableModal();
+
+     setUpdateStatus(
+       "NucleoPin is up to date."
+     );
+
+     if(manual){
+       showToast(
+         "You're using the latest version"
+       );
+     }
+
+   }
+
+ }catch(e){
+
+   console.error(
+     "Update check failed:",
+     e
+   );
+
+   if(manual){
+
+     setUpdateStatus(
+       "Could not check for updates."
+     );
+
+     showToast(
+       "Could not check for updates"
+     );
+
+   }else{
+
+     setUpdateStatus(
+       "Automatic update check unavailable."
+     );
+
+   }
+
+ }finally{
+
+   updateCheckBusy=false;
+
+   if(btn)btn.disabled=false;
+ }
 }
 
 const WELCOME_PREF_KEY="nucleopin.welcome.clean.hidden";
@@ -1148,6 +1271,10 @@ $("aboutApp").onclick=()=>{
 };
 $("closeAbout").onclick=()=>{$("aboutModal").hidden=true};
 $("checkForUpdates").onclick=()=>checkForAppUpdate({manual:true});
+
+$("installAvailableUpdate").onclick=installPendingUpdate;
+
+$("laterAvailableUpdate").onclick=hideUpdateAvailableModal;
 
 $("aboutShowWelcome").onchange=()=>{
  const show=$("aboutShowWelcome").checked;
@@ -1212,13 +1339,36 @@ document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
 });
 document.addEventListener("keydown",e=>{
  if(e.key!=="Escape")return;
+
  closeComponentModal();
- if($("aboutModal"))$("aboutModal").hidden=true;
- if($("missingIocModal"))$("missingIocModal").hidden=true;
+
+ if($("aboutModal")){
+   $("aboutModal").hidden=true;
+ }
+
+ if($("missingIocModal")){
+   $("missingIocModal").hidden=true;
+ }
+
+ hideUpdateAvailableModal();
 });
-frame.addEventListener("load",publishWiringToVisualizer);
+frame.addEventListener(
+ "load",
+ publishWiringToVisualizer
+);
+
 applyWelcomeStartupPreference();
+
 updateDisplayedVersion();
-watchTimer=setInterval(poll,3000);
+
+watchTimer=setInterval(
+ poll,
+ 3000
+);
+
 load();
-setTimeout(()=>checkForAppUpdate({manual:false}),4500);
+
+setTimeout(
+ ()=>checkForAppUpdate({manual:false}),
+ 4500
+);

@@ -1,6 +1,6 @@
 [package]
 name="nucleopin-desktop"
-version="1.0.2"
+version="1.0.3"
 description="NucleoPin Desktop"
 authors= ["NucleoPin"]
 edition="2021"

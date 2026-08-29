@@ -821,10 +821,13 @@ body.light *::-webkit-scrollbar-thumb{
   opacity:.08!important;
 }
 
-/* Normal Project mode: configured pins remain prominent. */
-.board.projectmode[data-active-filter="all"] .mpin.filter-visible:not(.unconfigured),
-.board.projectmode[data-active-filter="all"] .apin.filter-visible:not(.unconfigured){
+/* Project + All: "All" really means all visible connector pins.
+   Configured pins keep their signal styling, while unused pins remain visible
+   instead of being almost completely faded by Project mode. */
+.board.projectmode[data-active-filter="all"] .mpin.filter-visible,
+.board.projectmode[data-active-filter="all"] .apin.filter-visible{
   opacity:1!important;
+  filter:none!important;
 }
 
 /* When a specific filter is selected, matching pins are fully visible. */
@@ -1740,7 +1743,10 @@ function updateRealBoardState(){
     let filterOk=false;
     switch(realFilter){
       case "all":
-        filterOk = realView==="project" ? configured : isMcu;
+        // "All" means every physical socket, regardless of Physical/Project view.
+        // Configured sockets still keep their function colour; unused/special sockets
+        // remain neutral.
+        filterOk = true;
         break;
       case "used":
         filterOk = configured;
@@ -1758,7 +1764,7 @@ function updateRealBoardState(){
         filterOk = configured && /ADC/.test(signal);
         break;
       default:
-        filterOk = realView==="project" ? configured : isMcu;
+        filterOk = true;
     }
 
     let visible=searchOk&&filterOk;
